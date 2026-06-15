@@ -1,0 +1,1420 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inntegral Lead Explorer</title>
+  <style>
+:root {
+  --bg: #eef3fb;
+  --panel: rgba(255, 255, 255, 0.94);
+  --text: #111827;
+  --muted: #64748b;
+  --line: #d7deea;
+  --accent: #1457d9;
+  --accent-2: #00a4b8;
+  --accent-soft: #e8f0ff;
+  --shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: radial-gradient(circle at top left, rgba(20, 87, 217, 0.16), transparent 34%), radial-gradient(circle at top right, rgba(0, 164, 184, 0.12), transparent 30%), var(--bg);
+  color: var(--text);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: center;
+  padding: 34px 38px;
+  background: linear-gradient(135deg, #0f172a, #163b82 58%, #0f766e);
+  color: #fff;
+}
+
+.app-header h1 { margin: 0 0 6px; font-size: 34px; letter-spacing: -0.03em; }
+.app-header p { margin: 0; color: rgba(255,255,255,0.80); font-size: 15px; }
+.header-actions, .view-toggle { display: flex; gap: 10px; }
+
+main { padding: 24px 32px 48px; }
+.panel {
+  background: var(--panel);
+  border: 1px solid rgba(215, 222, 234, 0.9);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.status-panel, .filters-panel {
+  display: flex;
+  gap: 16px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  padding: 18px;
+  margin-bottom: 18px;
+}
+
+.status-panel strong { font-size: 15px; }
+.status-panel p { margin: 6px 0 0; color: var(--muted); }
+.field { display: flex; flex-direction: column; gap: 7px; min-width: 150px; }
+.field.wide { min-width: 280px; flex: 1.4; }
+.field.grow { flex: 1; min-width: 320px; }
+.field label { font-size: 13px; font-weight: 700; color: #344054; }
+.field small { max-width: 600px; color: var(--muted); }
+input, select, button {
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 9px 12px;
+  font: inherit;
+  background: #fff;
+}
+button {
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--accent);
+}
+button.active, button:hover {
+  background: linear-gradient(135deg, var(--accent), #0f766e);
+  border-color: transparent;
+  color: #fff;
+}
+.view-toggle button { min-height: 36px; padding: 7px 12px; }
+.results-heading { align-items: center; }
+.results-heading > div:first-child { display: flex; flex-direction: column; gap: 4px; }
+
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 18px 0;
+}
+.summary-card {
+  background: linear-gradient(180deg, #ffffff, #f8fbff);
+  border: 1px solid rgba(215, 222, 234, 0.95);
+  border-radius: 20px;
+  padding: 18px;
+  box-shadow: var(--shadow);
+}
+.summary-card span { display: block; font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+.summary-card label { color: var(--muted); font-size: 13px; }
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: minmax(360px, 0.9fr) minmax(420px, 1.1fr);
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.panel-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 16px;
+  padding: 18px 18px 0;
+}
+.panel-heading h2 { margin: 0; font-size: 18px; }
+.panel-heading span { color: var(--muted); font-size: 13px; }
+
+.bar-chart { padding: 18px; }
+.bar-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 190px) 1fr 42px;
+  gap: 10px;
+  align-items: center;
+  margin: 9px 0;
+  font-size: 13px;
+}
+.bar-label { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.bar-track { height: 12px; background: #eef2f7; border-radius: 999px; overflow: hidden; }
+.bar-fill { height: 100%; background: var(--accent); border-radius: 999px; }
+.bar-value { text-align: right; color: var(--muted); }
+
+#map { height: 360px; margin: 18px; border-radius: 14px; overflow: hidden; border: 1px solid var(--line); }
+.city-list { padding: 0 18px 18px; display: grid; gap: 6px; color: var(--muted); font-size: 13px; }
+.city-list div { display: flex; justify-content: space-between; border-bottom: 1px solid #eef2f7; padding-bottom: 6px; }
+
+.results-panel { padding-bottom: 18px; }
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 16px;
+  padding: 18px;
+}
+.property-card {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.property-card img {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  background: #eef2f7;
+}
+.card-body { padding: 14px; }
+.card-body h3 { margin: 0 0 6px; font-size: 16px; }
+.meta { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.metric { background: #f8fafc; border-radius: 12px; padding: 9px; }
+.metric strong { display: block; }
+.metric span { color: var(--muted); font-size: 12px; }
+.tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+.tier-pill,
+.management-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+}
+.tier-pill {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.management-pill {
+  color: #0f766e;
+  background: #e6fffa;
+}
+.card-actions { padding: 0 14px 14px; margin-top: auto; }
+.card-actions a { color: var(--accent); font-weight: 700; text-decoration: none; font-size: 13px; }
+
+.results-list { padding: 18px; overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; background: #fff; }
+th, td { padding: 11px 10px; border-bottom: 1px solid #eef2f7; text-align: left; font-size: 13px; }
+th { color: #344054; background: #f8fafc; position: sticky; top: 0; }
+td a { color: var(--accent); font-weight: 700; text-decoration: none; }
+.table-thumb { width: 64px; height: 42px; object-fit: cover; border-radius: 8px; background: #eef2f7; }
+.empty-state { color: var(--muted); padding: 24px; }
+
+@media (max-width: 1000px) {
+  .summary-grid, .analytics-grid { grid-template-columns: 1fr; }
+  .app-header { flex-direction: column; align-items: flex-start; }
+}
+
+
+.hidden { display: none !important; }
+.alert-panel {
+  padding: 16px 18px;
+  margin-bottom: 18px;
+  border-color: rgba(185, 28, 28, 0.22);
+  background: #fff7ed;
+}
+.alert-panel strong { color: #9a3412; }
+.alert-panel p { margin: 6px 0 0; color: #7c2d12; }
+
+#map {
+  position: relative;
+  height: 390px;
+  margin: 18px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #e5eaf3;
+}
+.map-placeholder {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: 24px;
+  text-align: center;
+  color: var(--muted);
+  background: linear-gradient(135deg, #f8fafc, #e8f0ff);
+}
+.map-placeholder strong {
+  display: block;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+.property-card {
+  position: relative;
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+.property-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 22px 50px rgba(15, 23, 42, 0.15);
+  border-color: rgba(20, 87, 217, 0.28);
+}
+.card-hover-actions {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  display: flex;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 150ms ease, transform 150ms ease;
+  z-index: 5;
+}
+.property-card:hover .card-hover-actions { opacity: 1; transform: translateY(0); }
+.card-hover-actions a {
+  border: 1px solid rgba(255,255,255,0.72);
+  background: rgba(15, 23, 42, 0.82);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
+}
+.revenue-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 10px;
+}
+.revenue-item {
+  border: 1px solid #e7edf6;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  border-radius: 12px;
+  padding: 9px;
+}
+.revenue-item strong { display: block; font-size: 13px; }
+.revenue-item span { display: block; color: var(--muted); font-size: 11px; margin-top: 2px; }
+.card-actions { display: none; }
+
+
+/* Multi-select filter dropdowns */
+.multi-select {
+  position: relative;
+  min-width: 150px;
+}
+.multi-select-control {
+  min-height: 40px;
+  border: 1px solid var(--line);
+  border-radius: 11px;
+  padding: 9px 34px 9px 12px;
+  background: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  color: var(--text);
+  position: relative;
+  user-select: none;
+}
+.multi-select-control::after {
+  content: "⌄";
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  color: var(--muted);
+  font-weight: 700;
+}
+.multi-select.open .multi-select-control {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(20, 87, 217, 0.10);
+}
+.multi-select-menu {
+  display: none;
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  left: 0;
+  width: max-content;
+  min-width: 100%;
+  max-width: 320px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.18);
+}
+.multi-select.open .multi-select-menu { display: grid; gap: 4px; }
+.multi-select-option {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 7px 8px;
+  border-radius: 9px;
+  color: #344054;
+  font-size: 13px;
+  cursor: pointer;
+}
+.multi-select-option:hover { background: #f1f5f9; }
+.multi-select-option input {
+  min-height: unset;
+  width: auto;
+  margin: 0;
+}
+.multi-select-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 4px 8px;
+  border-bottom: 1px solid #eef2f7;
+  margin-bottom: 4px;
+}
+.multi-select-actions button {
+  min-height: 28px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+/* Make the full city-density list usable when there are many cities. */
+.city-list {
+  max-height: 250px;
+  overflow-y: auto;
+  padding-right: 18px;
+}
+
+</style>
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <h1>Inntegral Lead Explorer</h1>
+      <p>Explore venue targets, filter by banquet complexity signals, and size</p>
+    </div>
+  </header>
+
+  <main>
+    <section id="csvAlert" class="panel alert-panel hidden">
+      <strong>Missing venues.csv</strong>
+      <p id="dataStatus">Could not load <code>venues.csv</code>. Make sure this page is served through localhost and that <code>venues.csv</code> sits beside the HTML file.</p>
+    </section>
+
+    <section class="panel filters-panel">
+      <div class="field wide">
+        <label for="searchInput">Search</label>
+        <input id="searchInput" type="search" placeholder="Property, city, state, brand, manager..." />
+      </div>
+      <div class="field">
+        <label for="brandFilter">Brand / chain</label>
+        <div id="brandFilter" class="multi-select" data-placeholder="All brands"></div>
+      </div>
+      <div class="field">
+        <label for="managementFilter">Managed by</label>
+        <div id="managementFilter" class="multi-select" data-placeholder="All managers"></div>
+      </div>
+      <div class="field">
+        <label for="stateFilter">State</label>
+        <div id="stateFilter" class="multi-select" data-placeholder="All states"></div>
+      </div>
+      <div class="field">
+        <label for="venueTypeFilter">Venue type</label>
+        <div id="venueTypeFilter" class="multi-select" data-placeholder="All venue types"></div>
+      </div>
+      <div class="field">
+        <label for="minEventSpace">Min event space</label>
+        <input id="minEventSpace" type="number" min="0" step="1000" placeholder="sq ft" />
+      </div>
+      <div class="field">
+        <label for="minEventRooms">Min event rooms</label>
+        <input id="minEventRooms" type="number" min="0" step="1" />
+      </div>
+      <div class="field">
+        <label for="minGuestRooms">Min guest rooms</label>
+        <input id="minGuestRooms" type="number" min="0" step="10" />
+      </div>
+      <div class="field">
+        <label for="tierFilter">Tier</label>
+        <div id="tierFilter" class="multi-select" data-placeholder="All tiers"></div>
+      </div>
+      <div class="field">
+        <label for="sortSelect">Sort</label>
+        <select id="sortSelect">
+          <option value="eventSpaceDesc">Event space: high to low</option>
+          <option value="eventSpaceAsc">Event space: low to high</option>
+          <option value="eventRoomsDesc">Event rooms: high to low</option>
+          <option value="guestRoomsDesc">Guest rooms: high to low</option>
+          <option value="nameAsc">Property name</option>
+          <option value="cityAsc">City</option>
+        </select>
+      </div>
+      <button id="resetFiltersBtn" type="button">Reset</button>
+    </section>
+
+
+    <section class="summary-grid">
+      <div class="summary-card"><span id="filteredCount">0</span><label>Filtered properties</label></div>
+      <div class="summary-card"><span id="estimatedArr">$0</span><label>Filtered target ARR</label></div>
+      <div class="summary-card"><span id="arrProgress">0%</span><label>Progress to $1M ARR</label></div>
+      <div class="summary-card"><span id="cityCount">0</span><label>Cities represented</label></div>
+    </section>
+
+    <section class="analytics-grid">
+      <div class="panel">
+        <div class="panel-heading">
+          <h2>Brand / chain distribution</h2>
+          <span id="brandDistributionNote"></span>
+        </div>
+        <div id="brandChart" class="bar-chart empty-state">Load a CSV to see brand distribution.</div>
+      </div>
+      <div class="panel">
+        <div class="panel-heading">
+          <h2>City density map</h2>
+          <span>Interactive map grouped by city/state</span>
+        </div>
+        <div id="map"></div>
+        <div id="cityDensityList" class="city-list"></div>
+      </div>
+    </section>
+
+    <section class="panel results-panel">
+      <div class="panel-heading results-heading">
+        <div>
+          <h2>Properties</h2>
+          <span id="resultRange"></span>
+        </div>
+        <div class="view-toggle">
+          <button id="cardViewBtn" class="active" type="button">Card view</button>
+          <button id="listViewBtn" type="button">List view</button>
+        </div>
+      </div>
+      <div id="results" class="cards empty-state">Load a CSV to begin.</div>
+    </section>
+  </main>
+
+  <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="lead-explorer-config.js"></script>
+  <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
+  <script>
+/* global Papa, google */
+
+const PRICING_MODELS = {
+  default: {
+    label: "Standard",
+    listRates: { first: 0.36, second: 0.24, third: 0.12, fourth: 0.06 },
+  },
+  "Marriott International": {
+    label: "Marriott managed",
+    listRates: { first: 0.32, second: 0.21, third: 0.10, fourth: 0.05 },
+  },
+};
+
+const TARGET_PRICE_MULTIPLIER = 0.80;
+
+const appState = {
+  rows: [],
+  filteredRows: [],
+  view: "cards",
+  map: null,
+  markers: [],
+  markerClusterer: null,
+  geocoder: null,
+  infoWindow: null,
+  mapRequestId: 0,
+};
+
+const els = {
+  csvAlert: document.getElementById("csvAlert"),
+  dataStatus: document.getElementById("dataStatus"),
+  searchInput: document.getElementById("searchInput"),
+  brandFilter: document.getElementById("brandFilter"),
+  managementFilter: document.getElementById("managementFilter"),
+  stateFilter: document.getElementById("stateFilter"),
+  venueTypeFilter: document.getElementById("venueTypeFilter"),
+  tierFilter: document.getElementById("tierFilter"),
+  minEventSpace: document.getElementById("minEventSpace"),
+  minEventRooms: document.getElementById("minEventRooms"),
+  minGuestRooms: document.getElementById("minGuestRooms"),
+  sortSelect: document.getElementById("sortSelect"),
+  resetFiltersBtn: document.getElementById("resetFiltersBtn"),
+  cardViewBtn: document.getElementById("cardViewBtn"),
+  listViewBtn: document.getElementById("listViewBtn"),
+  filteredCount: document.getElementById("filteredCount"),
+  estimatedArr: document.getElementById("estimatedArr"),
+  cityCount: document.getElementById("cityCount"),
+  arrProgress: document.getElementById("arrProgress"),
+  brandChart: document.getElementById("brandChart"),
+  brandDistributionNote: document.getElementById("brandDistributionNote"),
+  cityDensityList: document.getElementById("cityDensityList"),
+  results: document.getElementById("results"),
+  resultRange: document.getElementById("resultRange"),
+};
+
+/**
+ * Converts a CSV value into a number, returning 0 for missing values.
+ * @param {unknown} value
+ * @returns {number}
+ */
+function toNumber(value) {
+  if (value === null || value === undefined || value === "") return 0;
+  const parsed = Number(String(value).replace(/,/g, ""));
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+/**
+ * Formats an integer with separators.
+ * @param {number} value
+ * @returns {string}
+ */
+function formatNumber(value) {
+  return Math.round(value || 0).toLocaleString();
+}
+
+/**
+ * Formats a number as USD currency.
+ * @param {number} value
+ * @returns {string}
+ */
+function formatCurrency(value) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value || 0);
+}
+
+/**
+ * Escapes HTML to safely render CSV-provided text.
+ * @param {unknown} value
+ * @returns {string}
+ */
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+/**
+ * Assigns a simple Inntegral target tier from total event space.
+ * @param {number} eventSpace
+ * @returns {string}
+ */
+function getTier(eventSpace) {
+  if (eventSpace >= 450000) return "Mega";
+  if (eventSpace >= 150000) return "Convention";
+  if (eventSpace >= 75000) return "Large";
+  return "Core";
+}
+
+
+/**
+ * Normalizes management company names imported from enrichment columns.
+ * @param {unknown} value
+ * @returns {string}
+ */
+function normalizeManagementCompany(value) {
+  const raw = String(value || "").trim();
+  const normalized = raw.toLowerCase();
+
+  if (!raw) return "Unknown";
+  if (normalized.includes("marriott")) return "Marriott";
+  if (normalized.includes("hilton")) return "Hilton";
+
+  return raw;
+}
+
+/**
+ * Formats the management company tag shown on property cards.
+ * @param {string} managementCompany
+ * @returns {string}
+ */
+function formatManagementTag(managementCompany) {
+  if (!managementCompany || managementCompany === "Unknown") return "";
+  return `Managed by ${managementCompany}`;
+}
+
+
+/**
+ * Normalizes management company names for pricing model lookup.
+ * @param {string} managementCompany
+ * @returns {string}
+ */
+function getPricingModelKey(managementCompany) {
+  const value = String(managementCompany || "").trim().toLowerCase();
+
+  if (value.includes("marriott")) return "Marriott International";
+
+  return "default";
+}
+
+/**
+ * Returns the pricing model for a row based on its management company.
+ * @param {object} row
+ * @returns {object}
+ */
+function getPricingModelForRow(row) {
+  return PRICING_MODELS[getPricingModelKey(row.managementCompany)] || PRICING_MODELS.default;
+}
+
+/**
+ * Applies the hardcoded annual list-price formula for a property.
+ *
+ * Base formula:
+ * 12000
+ * + max(0, min(eventSpace, 130000) - 50000) * rate1
+ * + max(0, min(eventSpace, 200000) - 130000) * rate2
+ * + max(0, min(eventSpace, 350000) - 200000) * rate3
+ * + max(0, eventSpace - 350000) * rate4
+ *
+ * @param {number} eventSpace
+ * @param {{first: number, second: number, third: number, fourth: number}} rates
+ * @returns {number}
+ */
+function calculateListPrice(eventSpace, rates) {
+  const sqft = Math.max(0, toNumber(eventSpace));
+
+  return Math.round(
+    12000
+      + Math.max(0, Math.min(sqft, 130000) - 50000) * rates.first
+      + Math.max(0, Math.min(sqft, 200000) - 130000) * rates.second
+      + Math.max(0, Math.min(sqft, 350000) - 200000) * rates.third
+      + Math.max(0, sqft - 350000) * rates.fourth
+  );
+}
+
+/**
+ * Calculates list and target ARR using the management-company-specific model.
+ * @param {object} row
+ * @returns {{pricingModelName: string, listArr: number, targetArr: number}}
+ */
+function calculatePricing(row) {
+  const model = getPricingModelForRow(row);
+  const listArr = calculateListPrice(row.totalEventSpaceSqFt, model.listRates);
+
+  return {
+    pricingModelName: model.label,
+    listArr,
+    targetArr: Math.round(listArr * TARGET_PRICE_MULTIPLIER),
+  };
+}
+
+
+/**
+ * Normalizes one CSV row into a consistent venue object.
+ * @param {object} row
+ * @returns {object|null}
+ */
+function normalizeRow(row) {
+  const propertyName = String(row.propertyName || row.Property || row.name || "").trim();
+  const city = String(row.city || row.City || "").trim();
+  const state = String(row.state || row.State || "").trim().toUpperCase();
+  const totalEventSpaceSqFt = toNumber(row.totalEventSpaceSqFt || row.totalEventSpace || row["Total Event Space"]);
+
+  if (!propertyName || !city || !state) return null;
+  if (["VENUES", "PROMOTIONS", "DESTINATIONS", "DISCOVER"].includes(propertyName.toUpperCase())) return null;
+
+  const tier = getTier(totalEventSpaceSqFt);
+  const managementCompany = normalizeManagementCompany(
+    row.managementCompany ||
+    row["Management Company"] ||
+    row.managedBy ||
+    row["Managed By"] ||
+    ""
+  );
+
+  const normalizedRow = {
+    propertyName,
+    city,
+    state,
+    venueType: String(row.venueType || "").trim(),
+    brandChain: String(row.brandChain || "Unknown").trim() || "Unknown",
+    managementCompany,
+    eventRooms: toNumber(row.eventRooms),
+    guestRooms: toNumber(row.guestRooms),
+    largestRoomSqFt: toNumber(row.largestRoomSqFt),
+    totalEventSpaceSqFt,
+    imageFile: String(row.imageFile || "").trim(),
+    imageUrl: String(row.imageUrl || "").trim(),
+    sourceUrl: String(row.sourceUrl || "").trim(),
+    hospitalityOnlineUrl: String(
+      row.hospitalityOnlineUrl ||
+      row.hospitalityOnlineURL ||
+      row.hospitality_online_url ||
+      row["Hospitality Online URL"] ||
+      row["Hospitality Online"] ||
+      ""
+    ).trim(),
+    tier,
+  };
+
+  return {
+    ...normalizedRow,
+    ...calculatePricing(normalizedRow),
+  };
+}
+
+/**
+ * Loads raw CSV text.
+ * @param {string} csvText
+ */
+function loadCsvText(csvText) {
+  const result = Papa.parse(csvText, { header: true, skipEmptyLines: true });
+  loadRows(result.data);
+}
+
+/**
+ * Loads and normalizes parsed CSV rows.
+ * @param {Array<object>} rows
+ */
+function loadRows(rows) {
+  appState.rows = rows.map(normalizeRow).filter(Boolean);
+  populateFilterOptions();
+  applyFilters();
+}
+
+/** Populates filter dropdowns from the loaded dataset. */
+function populateFilterOptions() {
+  setOptions(els.brandFilter, uniqueValues(appState.rows.map((row) => row.brandChain)));
+  setOptions(els.managementFilter, uniqueValues(appState.rows.map((row) => row.managementCompany).filter((value) => value && value !== "Unknown")));
+  setOptions(els.stateFilter, uniqueValues(appState.rows.map((row) => row.state)));
+  setOptions(els.venueTypeFilter, uniqueValues(appState.rows.map((row) => row.venueType)));
+  setOptions(els.tierFilter, ["Core", "Large", "Convention", "Mega"]);
+}
+
+/**
+ * Returns sorted unique non-empty values.
+ * @param {Array<string>} values
+ * @returns {Array<string>}
+ */
+function uniqueValues(values) {
+  return Array.from(new Set(values.filter(Boolean))).sort((a, b) => a.localeCompare(b));
+}
+
+/**
+ * Sets options on a custom multi-select filter while preserving selected values.
+ * @param {HTMLElement} container
+ * @param {Array<string>} values
+ */
+function setOptions(container, values) {
+  const selected = getMultiSelectValues(container);
+  renderMultiSelect(container, values, selected);
+}
+
+/**
+ * Renders a custom checkbox-based multi-select dropdown.
+ * @param {HTMLElement} container
+ * @param {Array<string>} values
+ * @param {Array<string>} selectedValues
+ */
+function renderMultiSelect(container, values, selectedValues = []) {
+  const placeholder = container.dataset.placeholder || "All";
+  const selectedSet = new Set(selectedValues.filter((value) => values.includes(value)));
+
+  container.innerHTML = `
+    <div class="multi-select-control" tabindex="0">${escapeHtml(getMultiSelectLabel(placeholder, Array.from(selectedSet)))}</div>
+    <div class="multi-select-menu">
+      <div class="multi-select-actions">
+        <button type="button" data-action="select-all">All</button>
+        <button type="button" data-action="clear">Clear</button>
+      </div>
+      ${values
+        .map((value) => `
+          <label class="multi-select-option">
+            <input type="checkbox" value="${escapeHtml(value)}" ${selectedSet.has(value) ? "checked" : ""} />
+            <span>${escapeHtml(value)}</span>
+          </label>
+        `)
+        .join("")}
+    </div>
+  `;
+
+  const control = container.querySelector(".multi-select-control");
+  const menu = container.querySelector(".multi-select-menu");
+
+  control.addEventListener("click", (event) => {
+    event.stopPropagation();
+    closeOtherMultiSelects(container);
+    container.classList.toggle("open");
+  });
+
+  control.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      closeOtherMultiSelects(container);
+      container.classList.toggle("open");
+    }
+  });
+
+  menu.addEventListener("click", (event) => {
+    event.stopPropagation();
+
+    const action = event.target?.dataset?.action;
+
+    if (action === "select-all") {
+      container.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+        input.checked = true;
+      });
+      updateMultiSelectLabel(container);
+      applyFilters();
+      return;
+    }
+
+    if (action === "clear") {
+      container.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+        input.checked = false;
+      });
+      updateMultiSelectLabel(container);
+      applyFilters();
+    }
+  });
+
+  container.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+    input.addEventListener("change", () => {
+      updateMultiSelectLabel(container);
+      applyFilters();
+    });
+  });
+
+  updateMultiSelectLabel(container);
+}
+
+/**
+ * Returns selected values from a custom multi-select container.
+ * @param {HTMLElement} container
+ * @returns {Array<string>}
+ */
+function getMultiSelectValues(container) {
+  if (!container) return [];
+  return Array.from(container.querySelectorAll('input[type="checkbox"]:checked')).map((input) => input.value);
+}
+
+/**
+ * Gets the display label for a multi-select control.
+ * @param {string} placeholder
+ * @param {Array<string>} values
+ * @returns {string}
+ */
+function getMultiSelectLabel(placeholder, values) {
+  if (!values.length) return placeholder;
+  if (values.length === 1) return values[0];
+  return `${values.length} selected`;
+}
+
+/**
+ * Updates a custom multi-select control label.
+ * @param {HTMLElement} container
+ */
+function updateMultiSelectLabel(container) {
+  const control = container.querySelector(".multi-select-control");
+  if (!control) return;
+
+  const placeholder = container.dataset.placeholder || "All";
+  control.textContent = getMultiSelectLabel(placeholder, getMultiSelectValues(container));
+}
+
+/**
+ * Closes all custom multi-select dropdowns except the active one.
+ * @param {HTMLElement|null} activeContainer
+ */
+function closeOtherMultiSelects(activeContainer = null) {
+  document.querySelectorAll(".multi-select.open").forEach((container) => {
+    if (container !== activeContainer) {
+      container.classList.remove("open");
+    }
+  });
+}
+
+/**
+ * Clears all selections from a custom multi-select container.
+ * @param {HTMLElement} container
+ */
+function clearMultiSelect(container) {
+  container.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+    input.checked = false;
+  });
+  updateMultiSelectLabel(container);
+}
+
+/** Applies all filters, sorting, summaries, analytics, and results rendering. */
+function applyFilters() {
+  const query = els.searchInput.value.trim().toLowerCase();
+  const brands = getMultiSelectValues(els.brandFilter);
+  const managers = getMultiSelectValues(els.managementFilter);
+  const states = getMultiSelectValues(els.stateFilter);
+  const venueTypes = getMultiSelectValues(els.venueTypeFilter);
+  const tiers = getMultiSelectValues(els.tierFilter);
+  const minEventSpace = toNumber(els.minEventSpace.value);
+  const minEventRooms = toNumber(els.minEventRooms.value);
+  const minGuestRooms = toNumber(els.minGuestRooms.value);
+
+  appState.filteredRows = appState.rows.filter((row) => {
+    const haystack = [row.propertyName, row.city, row.state, row.venueType, row.brandChain, row.managementCompany, row.tier]
+      .join(" ")
+      .toLowerCase();
+
+    if (query && !haystack.includes(query)) return false;
+    if (brands.length && !brands.includes(row.brandChain)) return false;
+    if (managers.length && !managers.includes(row.managementCompany)) return false;
+    if (states.length && !states.includes(row.state)) return false;
+    if (venueTypes.length && !venueTypes.includes(row.venueType)) return false;
+    if (tiers.length && !tiers.includes(row.tier)) return false;
+    if (minEventSpace && row.totalEventSpaceSqFt < minEventSpace) return false;
+    if (minEventRooms && row.eventRooms < minEventRooms) return false;
+    if (minGuestRooms && row.guestRooms < minGuestRooms) return false;
+    return true;
+  });
+
+  for (const row of appState.rows) {
+    Object.assign(row, calculatePricing(row));
+  }
+
+  sortRows(appState.filteredRows, els.sortSelect.value);
+  renderSummary();
+  renderBrandChart();
+  renderMap();
+  renderResults();
+}
+
+/**
+ * Sorts rows in place.
+ * @param {Array<object>} rows
+ * @param {string} sortKey
+ */
+function sortRows(rows, sortKey) {
+  const sorters = {
+    eventSpaceDesc: (a, b) => b.totalEventSpaceSqFt - a.totalEventSpaceSqFt,
+    eventSpaceAsc: (a, b) => a.totalEventSpaceSqFt - b.totalEventSpaceSqFt,
+    eventRoomsDesc: (a, b) => b.eventRooms - a.eventRooms,
+    guestRoomsDesc: (a, b) => b.guestRooms - a.guestRooms,
+    nameAsc: (a, b) => a.propertyName.localeCompare(b.propertyName),
+    cityAsc: (a, b) => a.city.localeCompare(b.city) || a.propertyName.localeCompare(b.propertyName),
+  };
+  rows.sort(sorters[sortKey] || sorters.eventSpaceDesc);
+}
+
+/** Renders high-level summary cards. */
+function renderSummary() {
+  const rows = appState.filteredRows;
+  const estimatedArr = rows.reduce((sum, row) => sum + row.targetArr, 0);
+  const cityCount = new Set(rows.map((row) => `${row.city}, ${row.state}`)).size;
+
+  els.filteredCount.textContent = formatNumber(rows.length);
+  els.estimatedArr.textContent = `$${formatNumber(estimatedArr)}`;
+  els.arrProgress.textContent = `${((estimatedArr / 1000000) * 100).toFixed(1)}%`;
+  els.cityCount.textContent = formatNumber(cityCount);
+  els.resultRange.textContent = `${formatNumber(rows.length)} of ${formatNumber(appState.rows.length)} loaded`;
+}
+
+/** Renders a simple bar chart for top brands/chains. */
+function renderBrandChart() {
+  const counts = countBy(appState.filteredRows, (row) => row.brandChain || "Unknown")
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 12);
+
+  if (!counts.length) {
+    els.brandChart.className = "bar-chart empty-state";
+    els.brandChart.textContent = "No matching rows.";
+    els.brandDistributionNote.textContent = "";
+    return;
+  }
+
+  const max = Math.max(...counts.map((item) => item.count));
+  els.brandChart.className = "bar-chart";
+  els.brandDistributionNote.textContent = `Top ${counts.length}`;
+  els.brandChart.innerHTML = counts
+    .map((item) => `
+      <div class="bar-row" title="${escapeHtml(item.key)}">
+        <div class="bar-label">${escapeHtml(item.key)}</div>
+        <div class="bar-track"><div class="bar-fill" style="width:${(item.count / max) * 100}%"></div></div>
+        <div class="bar-value">${item.count}</div>
+      </div>
+    `)
+    .join("");
+}
+
+/**
+ * Counts rows by key function.
+ * @param {Array<object>} rows
+ * @param {(row: object) => string} keyFn
+ * @returns {Array<{key: string, count: number, rows: Array<object>}>}
+ */
+function countBy(rows, keyFn) {
+  const map = new Map();
+  for (const row of rows) {
+    const key = keyFn(row) || "Unknown";
+    if (!map.has(key)) map.set(key, { key, count: 0, rows: [] });
+    const item = map.get(key);
+    item.count += 1;
+    item.rows.push(row);
+  }
+  return Array.from(map.values());
+}
+
+/**
+ * Dynamically loads the Google Maps JavaScript API.
+ * @returns {Promise<boolean>}
+ */
+function loadGoogleMaps() {
+  if (window.google?.maps) return Promise.resolve(true);
+
+  if (window.__inntegralGoogleMapsPromise) return window.__inntegralGoogleMapsPromise;
+
+  window.__inntegralGoogleMapsPromise = new Promise((resolve, reject) => {
+    window.__initInntegralGoogleMap = () => resolve(true);
+
+    const script = document.createElement("script");
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(window.APP_CONFIG?.GOOGLE_MAPS_API_KEY)}&callback=__initInntegralGoogleMap`;
+    script.async = true;
+    script.defer = true;
+    script.onerror = () => reject(new Error("Google Maps failed to load."));
+    document.head.appendChild(script);
+  });
+
+  return window.__inntegralGoogleMapsPromise;
+}
+
+/**
+ * Initializes the Google map once.
+ * @returns {Promise<boolean>}
+ */
+async function initMap() {
+  const mapEl = document.getElementById("map");
+  const hasMaps = await loadGoogleMaps();
+
+  if (!hasMaps) {
+    mapEl.innerHTML = `
+      <div class="map-placeholder">
+        <div>
+          <strong>Google Maps API key required</strong>
+          Add your key to <code>GOOGLE_MAPS_API_KEY</code> near the top of the script to enable the interactive city-density map.
+        </div>
+      </div>
+    `;
+    return false;
+  }
+
+  if (appState.map) return true;
+
+  appState.map = new google.maps.Map(mapEl, {
+    center: { lat: 39.5, lng: -98.35 },
+    zoom: 4,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: true,
+  });
+
+  appState.geocoder = new google.maps.Geocoder();
+  appState.infoWindow = new google.maps.InfoWindow();
+
+  return true;
+}
+
+/**
+ * Geocodes a city/state and caches the result locally.
+ * @param {string} cityState
+ * @returns {Promise<{lat: number, lng: number}|null>}
+ */
+async function geocodeCity(cityState) {
+  const cacheKey = `inntegralLeadExplorerGeo:${cityState}`;
+  const cached = localStorage.getItem(cacheKey);
+
+  if (cached) {
+    try {
+      return JSON.parse(cached);
+    } catch (error) {
+      localStorage.removeItem(cacheKey);
+    }
+  }
+
+  if (!appState.geocoder) return null;
+
+  return new Promise((resolve) => {
+    appState.geocoder.geocode({ address: `${cityState}, United States` }, (results, status) => {
+      if (status !== "OK" || !results?.[0]) {
+        resolve(null);
+        return;
+      }
+
+      const location = results[0].geometry.location;
+      const coords = { lat: location.lat(), lng: location.lng() };
+      localStorage.setItem(cacheKey, JSON.stringify(coords));
+      resolve(coords);
+    });
+  });
+}
+
+/**
+ * Renders an interactive Google Maps city density map.
+ * City/state rows are geocoded once and cached in localStorage.
+ */
+async function renderMap() {
+  const requestId = ++appState.mapRequestId;
+  const ready = await initMap();
+  if (!ready || requestId !== appState.mapRequestId) return;
+
+  if (appState.markerClusterer) {
+    appState.markerClusterer.clearMarkers();
+    appState.markerClusterer = null;
+  }
+
+  for (const marker of appState.markers) marker.setMap(null);
+  appState.markers = [];
+
+  const cityCounts = countBy(appState.filteredRows, (row) => `${row.city}, ${row.state}`)
+    .sort((a, b) => b.count - a.count);
+
+  els.cityDensityList.innerHTML = cityCounts.length
+    ? cityCounts
+        .map((item) => `<div><span>${escapeHtml(item.key)}</span><strong>${item.count}</strong></div>`)
+        .join("")
+    : `<div><span>No matching cities</span><strong>0</strong></div>`;
+
+  const markerData = [];
+
+  for (const item of cityCounts) {
+    if (requestId !== appState.mapRequestId) return;
+
+    const coords = await geocodeCity(item.key);
+    if (!coords) continue;
+
+    markerData.push({
+      item,
+      coords,
+      radius: Math.max(8, Math.min(20, 7 + item.count * 2)),
+    });
+
+    await new Promise((resolve) => setTimeout(resolve, 60));
+  }
+
+  if (requestId !== appState.mapRequestId) return;
+
+  const bounds = new google.maps.LatLngBounds();
+
+  appState.markers = markerData.map((data) => {
+    const marker = new google.maps.Marker({
+      position: data.coords,
+      title: `${data.item.key} · ${data.item.count} properties`,
+      icon: {
+        path: google.maps.SymbolPath.CIRCLE,
+        scale: data.radius,
+        fillColor: "#1457d9",
+        fillOpacity: 0.30,
+        strokeColor: "#1457d9",
+        strokeWeight: 2,
+      },
+    });
+
+    marker.addListener("click", () => {
+      appState.infoWindow.setContent(
+        `<strong>${escapeHtml(data.item.key)}</strong><br>${data.item.count} properties`
+      );
+      appState.infoWindow.open(appState.map, marker);
+    });
+
+    bounds.extend(data.coords);
+    return marker;
+  });
+
+  if (window.markerClusterer?.MarkerClusterer) {
+    appState.markerClusterer = new markerClusterer.MarkerClusterer({
+      map: appState.map,
+      markers: appState.markers,
+      renderer: {
+        render: ({ count, position }) => {
+          return new google.maps.Marker({
+            position,
+            icon: {
+              url:
+                "data:image/svg+xml;charset=UTF-8," +
+                encodeURIComponent(`
+                  <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46">
+                    <circle cx="23" cy="23" r="20" fill="#1457d9" fill-opacity="0.86" stroke="white" stroke-width="3"/>
+                    <text x="23" y="28" text-anchor="middle" font-size="13" font-weight="800" font-family="Arial" fill="white">${count}</text>
+                  </svg>
+                `),
+              scaledSize: new google.maps.Size(46, 46),
+            },
+            label: "",
+            zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
+          });
+        },
+      },
+    });
+  } else {
+    for (const marker of appState.markers) {
+      marker.setMap(appState.map);
+    }
+  }
+
+  if (!bounds.isEmpty()) {
+    appState.map.fitBounds(bounds, 48);
+  }
+}
+
+/** Renders the property results in the selected view. */
+function renderResults() {
+  if (!appState.filteredRows.length) {
+    els.results.className = appState.view === "cards" ? "cards empty-state" : "results-list empty-state";
+    els.results.textContent = appState.rows.length ? "No properties match the current filters." : "Load a CSV to begin.";
+    return;
+  }
+
+  if (appState.view === "cards") renderCards();
+  else renderList();
+}
+
+/** Gets the preferred image source for a row. */
+function getImageSrc(row) {
+  if (row.imageFile) return row.imageFile.replace(/^\.\//, "");
+  return row.imageUrl || "";
+}
+
+/**
+ * Checks whether a row has a resolved Hospitality Online URL from the CSV.
+ * @param {object} row
+ * @returns {boolean}
+ */
+function hasHospitalityOnlineUrl(row) {
+  return Boolean(String(row.hospitalityOnlineUrl || "").trim());
+}
+
+/** Renders card view. */
+function renderCards() {
+  els.results.className = "cards";
+  els.results.innerHTML = appState.filteredRows
+    .map((row) => `
+      <article class="property-card">
+        <div class="card-hover-actions">
+          ${row.sourceUrl ? `<a href="${escapeHtml(row.sourceUrl)}" target="_blank" rel="noopener">Cvent</a>` : ""}
+          ${hasHospitalityOnlineUrl(row) ? `<a href="${escapeHtml(row.hospitalityOnlineUrl)}" target="_blank" rel="noopener">Hospitality Online</a>` : ""}
+        </div>
+        <img src="${escapeHtml(getImageSrc(row))}" alt="" onerror="this.style.display='none'" />
+        <div class="card-body">
+          <h3>${escapeHtml(row.propertyName)}</h3>
+          <div class="meta">${escapeHtml(row.city)}, ${escapeHtml(row.state)} · ${escapeHtml(row.brandChain)} · ${escapeHtml(row.venueType)}</div>
+          <div class="metrics">
+            <div class="metric"><strong>${formatNumber(row.totalEventSpaceSqFt)}</strong><span>Total sq ft</span></div>
+            <div class="metric"><strong>${formatNumber(row.eventRooms)}</strong><span>Event rooms</span></div>
+            <div class="metric"><strong>${formatNumber(row.guestRooms)}</strong><span>Guest rooms</span></div>
+            <div class="metric"><strong>${formatNumber(row.largestRoomSqFt)}</strong><span>Largest room</span></div>
+          </div>
+          <div class="revenue-grid">
+            <div class="revenue-item"><strong>${formatCurrency(row.listArr)}</strong><span>List price</span></div>
+            <div class="revenue-item"><strong>${formatCurrency(row.targetArr)}</strong><span>20% off</span></div>
+            <div class="revenue-item"><strong>${((row.targetArr / 1000000) * 100).toFixed(1)}%</strong><span>of $1M ARR</span></div>
+          </div>
+          <div class="tag-row">
+            <span class="tier-pill">${escapeHtml(row.tier)}</span>
+            ${row.managementCompany && row.managementCompany !== "Unknown" ? `<span class="management-pill">${escapeHtml(formatManagementTag(row.managementCompany))}</span>` : ""}
+          </div>
+        </div>
+      </article>
+    `)
+    .join("");
+}
+
+/** Renders list/table view. */
+function renderList() {
+  els.results.className = "results-list";
+  els.results.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Property</th>
+          <th>City</th>
+          <th>State</th>
+          <th>Brand / chain</th>
+          <th>Management company</th>
+          <th>Type</th>
+          <th>Event rooms</th>
+          <th>Guest rooms</th>
+          <th>Largest room</th>
+          <th>Total event space</th>
+          <th>Tier</th>
+          <th>List ARR</th>
+          <th>Target ARR<br><small>20% off</small></th>
+          <th>Target %</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${appState.filteredRows
+          .map((row) => `
+            <tr>
+              <td><img class="table-thumb" src="${escapeHtml(getImageSrc(row))}" alt="" onerror="this.style.display='none'" /></td>
+              <td>${row.sourceUrl ? `<a href="${escapeHtml(row.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(row.propertyName)}</a>` : escapeHtml(row.propertyName)}</td>
+              <td>${escapeHtml(row.city)}</td>
+              <td>${escapeHtml(row.state)}</td>
+              <td>${escapeHtml(row.brandChain)}</td>
+              <td>${escapeHtml(row.managementCompany)}</td>
+              <td>${escapeHtml(row.venueType)}</td>
+              <td>${formatNumber(row.eventRooms)}</td>
+              <td>${formatNumber(row.guestRooms)}</td>
+              <td>${formatNumber(row.largestRoomSqFt)}</td>
+              <td>${formatNumber(row.totalEventSpaceSqFt)}</td>
+              <td>${escapeHtml(row.tier)}</td>
+              <td>${formatCurrency(row.listArr)}</td>
+              <td>${formatCurrency(row.targetArr)}</td>
+              <td>${((row.targetArr / 1000000) * 100).toFixed(1)}%</td>
+            </tr>
+          `)
+          .join("")}
+      </tbody>
+    </table>
+  `;
+}
+
+/** Resets all filters. */
+function resetFilters() {
+  els.searchInput.value = "";
+  clearMultiSelect(els.brandFilter);
+  clearMultiSelect(els.managementFilter);
+  clearMultiSelect(els.stateFilter);
+  clearMultiSelect(els.venueTypeFilter);
+  clearMultiSelect(els.tierFilter);
+  els.minEventSpace.value = "";
+  els.minEventRooms.value = "";
+  els.minGuestRooms.value = "";
+  els.sortSelect.value = "eventSpaceDesc";
+  applyFilters();
+}
+
+async function loadDefaultCsv() {
+  try {
+    const response = await fetch("./venues.csv", { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    loadCsvText(await response.text());
+    els.csvAlert.classList.add("hidden");
+  } catch (error) {
+    els.csvAlert.classList.remove("hidden");
+    els.dataStatus.innerHTML = `Could not load <code>venues.csv</code>. Make sure this page is served through localhost and that <code>venues.csv</code> sits beside the HTML file.`;
+    console.error("VENUES_CSV_LOAD_FAILED", error);
+  }
+}
+
+[
+  els.searchInput,
+  els.minEventSpace,
+  els.minEventRooms,
+  els.minGuestRooms,
+  els.sortSelect,
+].forEach((el) => el.addEventListener("input", applyFilters));
+
+document.addEventListener("click", () => closeOtherMultiSelects());
+
+els.resetFiltersBtn.addEventListener("click", resetFilters);
+
+els.cardViewBtn.addEventListener("click", () => {
+  appState.view = "cards";
+  els.cardViewBtn.classList.add("active");
+  els.listViewBtn.classList.remove("active");
+  renderResults();
+});
+
+els.listViewBtn.addEventListener("click", () => {
+  appState.view = "list";
+  els.listViewBtn.classList.add("active");
+  els.cardViewBtn.classList.remove("active");
+  renderResults();
+});
+
+
+loadDefaultCsv();
+
+</script>
+</body>
+</html>
