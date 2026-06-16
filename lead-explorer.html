@@ -322,7 +322,7 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
 .multi-select-menu {
   display: none;
   position: absolute;
-  z-index: 30;
+  z-index: 1000;
   top: calc(100% + 6px);
   left: 0;
   width: max-content;
@@ -373,6 +373,37 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
   max-height: 250px;
   overflow-y: auto;
   padding-right: 18px;
+}
+
+/* Keep filter dropdowns above analytics panels */
+.panel.filters-panel {
+  position: relative;
+  z-index: 1000;
+  overflow: visible;
+}
+
+.summary-grid,
+.analytics-grid,
+.results-panel {
+  position: relative;
+  z-index: 1;
+}
+
+.analytics-grid .panel {
+  position: relative;
+  z-index: 1;
+}
+
+.multi-select {
+  position: relative;
+}
+
+.multi-select.open {
+  z-index: 2000;
+}
+
+.multi-select-menu {
+  z-index: 3000;
 }
 
 </style>
