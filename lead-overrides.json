@@ -1,0 +1,20 @@
+{
+  "_metadata": {
+    "version": "2026-06-17T07:25:09.772Z",
+    "exportedAt": "2026-06-17T07:25:09.772Z",
+    "schema": "inntegral-lead-overrides-v1"
+  },
+  "properties": {
+    "venue-d8c33a34-af01-435b-909b-a117ea06f703": {
+      "propertyName": "Gaylord National Resort & Convention Center",
+      "city": "National Harbor",
+      "state": "MD",
+      "funnelStatus": "signed",
+      "expectedAnnualValue": 39600,
+      "signedAnnualValue": 39600,
+      "notes": "Based on $3,300/month paid annually.",
+      "source": "in-app override",
+      "lastUpdated": "2026-06-17"
+    }
+  }
+}

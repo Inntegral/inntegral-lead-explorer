@@ -175,7 +175,8 @@ button.active, button:hover {
   margin-top: 10px;
 }
 .tier-pill,
-.management-pill {
+.management-pill,
+.ownership-pill {
   display: inline-flex;
   align-items: center;
   padding: 5px 9px;
@@ -190,6 +191,10 @@ button.active, button:hover {
 .management-pill {
   color: #0f766e;
   background: #e6fffa;
+}
+.ownership-pill {
+  color: #7c3aed;
+  background: #f3e8ff;
 }
 .card-actions { padding: 0 14px 14px; margin-top: auto; }
 .card-actions a { color: var(--accent); font-weight: 700; text-decoration: none; font-size: 13px; }
@@ -406,6 +411,176 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
   z-index: 3000;
 }
 
+
+/* CRM overrides, funnel status, and ARR meter */
+.crm-panel {
+  padding: 18px;
+  margin: 18px 0;
+}
+.crm-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.crm-summary-item {
+  border: 1px solid #e7edf6;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  border-radius: 14px;
+  padding: 12px;
+}
+.crm-summary-item strong { display: block; font-size: 18px; }
+.crm-summary-item span { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.arr-meter {
+  height: 18px;
+  display: flex;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e5e7eb;
+  border: 1px solid #dbe3ef;
+}
+.arr-meter-segment { min-width: 0; height: 100%; }
+.arr-meter-signed { background: #16a34a; }
+.arr-meter-pipeline { background: #eab308; }
+.arr-meter-target { background: #94a3b8; }
+.arr-meter-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+  color: var(--muted);
+  font-size: 12px;
+}
+.arr-meter-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.arr-meter-legend span::before { content: ""; width: 10px; height: 10px; border-radius: 999px; background: #94a3b8; }
+.arr-meter-legend .legend-signed::before { background: #16a34a; }
+.arr-meter-legend .legend-pipeline::before { background: #eab308; }
+.arr-meter-legend .legend-target::before { background: #94a3b8; }
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  color: #475569;
+  background: #f1f5f9;
+}
+.status-pill.status-signed { color: #166534; background: #dcfce7; }
+.status-pill.status-contracting,
+.status-pill.status-proposal_sent,
+.status-pill.status-demo_scheduled,
+.status-pill.status-warm_intro { color: #854d0e; background: #fef3c7; }
+.status-pill.status-lost,
+.status-pill.status-not_fit { color: #991b1b; background: #fee2e2; }
+.property-card.status-card-target {
+  border: 2px solid #64748b;
+  box-shadow: 0 18px 45px rgba(100, 116, 139, 0.14);
+}
+.property-card.status-card-signed {
+  border: 2px solid #16a34a;
+  box-shadow: 0 18px 45px rgba(22, 163, 74, 0.18);
+}
+.property-card.status-card-contracting,
+.property-card.status-card-proposal_sent,
+.property-card.status-card-demo_scheduled,
+.property-card.status-card-warm_intro {
+  border: 2px solid #eab308;
+  box-shadow: 0 18px 45px rgba(234, 179, 8, 0.16);
+}
+.property-card.status-card-lost,
+.property-card.status-card-not_fit {
+  border: 2px solid #dc2626;
+  box-shadow: 0 18px 45px rgba(220, 38, 38, 0.13);
+}
+.status-flag {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.01em;
+  color: #fff;
+  background: rgba(71, 85, 105, 0.92);
+  box-shadow: 0 10px 25px rgba(15, 23, 42, 0.24);
+  backdrop-filter: blur(8px);
+}
+.status-flag.status-flag-target { background: rgba(71, 85, 105, 0.94); }
+.status-flag.status-flag-signed { background: rgba(22, 163, 74, 0.94); }
+.status-flag.status-flag-contracting,
+.status-flag.status-flag-proposal_sent,
+.status-flag.status-flag-demo_scheduled,
+.status-flag.status-flag-warm_intro { background: rgba(202, 138, 4, 0.96); }
+.status-flag.status-flag-lost,
+.status-flag.status-flag-not_fit { background: rgba(185, 28, 28, 0.96); }
+.property-card:hover .status-flag {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-4px);
+}
+
+.dirty-alert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 18px;
+  margin-bottom: 18px;
+  border-color: rgba(180, 83, 9, 0.28);
+  background: #fffbeb;
+  color: #78350f;
+}
+.dirty-alert p { margin: 4px 0 0; color: #92400e; }
+.card-hover-actions button {
+  border: 1px solid rgba(255,255,255,0.72);
+  background: rgba(15, 23, 42, 0.82);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 999px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 800;
+  backdrop-filter: blur(8px);
+  min-height: auto;
+}
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  display: grid;
+  place-items: center;
+  background: rgba(15, 23, 42, 0.55);
+  padding: 18px;
+}
+.modal-card {
+  width: min(620px, 100%);
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid var(--line);
+  box-shadow: 0 28px 70px rgba(15, 23, 42, 0.28);
+  overflow: hidden;
+}
+.modal-header,
+.modal-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  padding: 16px 18px;
+  border-bottom: 1px solid #eef2f7;
+}
+.modal-actions { border-top: 1px solid #eef2f7; border-bottom: 0; justify-content: flex-end; }
+.modal-header h2 { margin: 0; font-size: 18px; }
+.modal-body { padding: 18px; display: grid; gap: 14px; }
+.modal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.modal-body textarea { min-height: 90px; border: 1px solid var(--line); border-radius: 11px; padding: 9px 12px; font: inherit; resize: vertical; }
+@media (max-width: 1000px) { .crm-summary-grid, .modal-grid { grid-template-columns: 1fr; } }
+
 </style>
 </head>
 <body>
@@ -422,10 +597,18 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
       <p id="dataStatus">Could not load <code>venues.csv</code>. Make sure this page is served through localhost and that <code>venues.csv</code> sits beside the HTML file.</p>
     </section>
 
+    <section id="overridesDirtyAlert" class="panel dirty-alert hidden">
+      <div>
+        <strong>Lead override changes not saved to file</strong>
+        <p>Download the updated JSON and replace <code>lead-overrides.json</code> beside this HTML file. The app will clear this warning automatically when the loaded file is current.</p>
+      </div>
+      <button id="downloadOverridesBtn" type="button">Download lead-overrides.json</button>
+    </section>
+
     <section class="panel filters-panel">
       <div class="field wide">
         <label for="searchInput">Search</label>
-        <input id="searchInput" type="search" placeholder="Property, city, state, brand, manager..." />
+        <input id="searchInput" type="search" placeholder="Property, city, state, brand, manager, owner..." />
       </div>
       <div class="field">
         <label for="brandFilter">Brand / chain</label>
@@ -434,6 +617,14 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
       <div class="field">
         <label for="managementFilter">Managed by</label>
         <div id="managementFilter" class="multi-select" data-placeholder="All managers"></div>
+      </div>
+      <div class="field">
+        <label for="ownershipFilter">Owned by</label>
+        <div id="ownershipFilter" class="multi-select" data-placeholder="All owners"></div>
+      </div>
+      <div class="field">
+        <label for="statusFilter">Funnel status</label>
+        <div id="statusFilter" class="multi-select" data-placeholder="All statuses"></div>
       </div>
       <div class="field">
         <label for="stateFilter">State</label>
@@ -477,8 +668,28 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
     <section class="summary-grid">
       <div class="summary-card"><span id="filteredCount">0</span><label>Filtered properties</label></div>
       <div class="summary-card"><span id="estimatedArr">$0</span><label>Filtered target ARR</label></div>
-      <div class="summary-card"><span id="arrProgress">0%</span><label>Progress to $1M ARR</label></div>
+      <div class="summary-card"><span id="arrProgress">0%</span><label>Signed progress to $1M ARR</label></div>
       <div class="summary-card"><span id="cityCount">0</span><label>Cities represented</label></div>
+    </section>
+
+    <section class="panel crm-panel">
+      <div class="panel-heading" style="padding:0 0 12px;">
+        <h2>ARR goal meter</h2>
+        <span>Green = signed, yellow = active pipeline, gray = target potential</span>
+      </div>
+      <div class="crm-summary-grid">
+        <div class="crm-summary-item"><strong id="signedArr">$0</strong><span>Signed ARR</span></div>
+        <div class="crm-summary-item"><strong id="pipelineArr">$0</strong><span>Active pipeline ARR</span></div>
+        <div class="crm-summary-item"><strong id="targetLeadArr">$0</strong><span>Target lead ARR</span></div>
+        <div class="crm-summary-item"><strong id="totalTrackedArr">$0</strong><span>Total tracked potential</span></div>
+      </div>
+      <div class="arr-meter" title="Progress to $1M ARR">
+        <div id="signedArrSegment" class="arr-meter-segment arr-meter-signed" style="width:0%"></div>
+        <div id="pipelineArrSegment" class="arr-meter-segment arr-meter-pipeline" style="width:0%"></div>
+        <div id="targetArrSegment" class="arr-meter-segment arr-meter-target" style="width:0%"></div>
+      </div>
+      <div id="arrMeterLegend" class="arr-meter-legend"></div>
+      <div id="overrideStatus" class="crm-note"></div>
     </section>
 
     <section class="analytics-grid">
@@ -514,6 +725,47 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
     </section>
   </main>
 
+  <div id="leadEditModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="leadEditTitle">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="leadEditTitle">Edit lead override</h2>
+        <button id="closeLeadEditBtn" type="button">Close</button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <strong id="leadEditPropertyName"></strong>
+          <div id="leadEditPropertyMeta" class="meta"></div>
+        </div>
+        <div class="modal-grid">
+          <div class="field">
+            <label for="leadStatusInput">Funnel status</label>
+            <select id="leadStatusInput"></select>
+          </div>
+          <div class="field">
+            <label for="expectedAnnualValueInput">Expected annual value</label>
+            <input id="expectedAnnualValueInput" type="number" min="0" step="100" placeholder="USD" />
+          </div>
+          <div class="field">
+            <label for="signedAnnualValueInput">Signed annual value</label>
+            <input id="signedAnnualValueInput" type="number" min="0" step="100" placeholder="USD" />
+          </div>
+          <div class="field">
+            <label>Venue key</label>
+            <input id="leadKeyInput" type="text" readonly />
+          </div>
+        </div>
+        <div class="field">
+          <label for="leadNotesInput">Notes</label>
+          <textarea id="leadNotesInput" placeholder="Context, intro path, pricing notes..."></textarea>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button id="clearLeadOverrideBtn" type="button">Clear override</button>
+        <button id="saveLeadOverrideBtn" type="button">Save override</button>
+      </div>
+    </div>
+  </div>
+
   <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
   <script src="lead-explorer-config.js"></script>
   <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
@@ -532,6 +784,20 @@ const PRICING_MODELS = {
 };
 
 const TARGET_PRICE_MULTIPLIER = 0.80;
+const ARR_GOAL = 1000000;
+const LEAD_OVERRIDES_STORAGE_KEY = "inntegralLeadOverridesWorkingCopy";
+const LEAD_OVERRIDES_META_STORAGE_KEY = "inntegralLeadOverridesWorkingCopyMeta";
+const FUNNEL_STATUSES = [
+  { value: "target", label: "Target" },
+  { value: "researched", label: "Researched" },
+  { value: "warm_intro", label: "Warm intro" },
+  { value: "demo_scheduled", label: "Demo scheduled" },
+  { value: "proposal_sent", label: "Proposal sent" },
+  { value: "contracting", label: "Contracting" },
+  { value: "signed", label: "Signed" },
+  { value: "lost", label: "Lost" },
+  { value: "not_fit", label: "Not fit" },
+];
 
 const appState = {
   rows: [],
@@ -543,6 +809,12 @@ const appState = {
   geocoder: null,
   infoWindow: null,
   mapRequestId: 0,
+  leadOverrides: {},
+  leadOverridesLoaded: false,
+  leadOverridesDirty: false,
+  leadOverridesFileVersion: "",
+  leadOverridesLocalVersion: "",
+  activeEditKey: "",
 };
 
 const els = {
@@ -551,6 +823,8 @@ const els = {
   searchInput: document.getElementById("searchInput"),
   brandFilter: document.getElementById("brandFilter"),
   managementFilter: document.getElementById("managementFilter"),
+  ownershipFilter: document.getElementById("ownershipFilter"),
+  statusFilter: document.getElementById("statusFilter"),
   stateFilter: document.getElementById("stateFilter"),
   venueTypeFilter: document.getElementById("venueTypeFilter"),
   tierFilter: document.getElementById("tierFilter"),
@@ -570,6 +844,29 @@ const els = {
   cityDensityList: document.getElementById("cityDensityList"),
   results: document.getElementById("results"),
   resultRange: document.getElementById("resultRange"),
+  overridesDirtyAlert: document.getElementById("overridesDirtyAlert"),
+  downloadOverridesBtn: document.getElementById("downloadOverridesBtn"),
+  signedArr: document.getElementById("signedArr"),
+  pipelineArr: document.getElementById("pipelineArr"),
+  targetLeadArr: document.getElementById("targetLeadArr"),
+  totalTrackedArr: document.getElementById("totalTrackedArr"),
+  signedArrSegment: document.getElementById("signedArrSegment"),
+  pipelineArrSegment: document.getElementById("pipelineArrSegment"),
+  targetArrSegment: document.getElementById("targetArrSegment"),
+  arrMeterLegend: document.getElementById("arrMeterLegend"),
+  overrideStatus: document.getElementById("overrideStatus"),
+  leadEditModal: document.getElementById("leadEditModal"),
+  closeLeadEditBtn: document.getElementById("closeLeadEditBtn"),
+  leadEditTitle: document.getElementById("leadEditTitle"),
+  leadEditPropertyName: document.getElementById("leadEditPropertyName"),
+  leadEditPropertyMeta: document.getElementById("leadEditPropertyMeta"),
+  leadStatusInput: document.getElementById("leadStatusInput"),
+  expectedAnnualValueInput: document.getElementById("expectedAnnualValueInput"),
+  signedAnnualValueInput: document.getElementById("signedAnnualValueInput"),
+  leadNotesInput: document.getElementById("leadNotesInput"),
+  leadKeyInput: document.getElementById("leadKeyInput"),
+  saveLeadOverrideBtn: document.getElementById("saveLeadOverrideBtn"),
+  clearLeadOverrideBtn: document.getElementById("clearLeadOverrideBtn"),
 };
 
 /**
@@ -620,6 +917,131 @@ function escapeHtml(value) {
 }
 
 /**
+ * Splits semicolon-delimited CSV fields into clean values.
+ * @param {unknown} value
+ * @returns {Array<string>}
+ */
+function splitMultiValue(value) {
+  return String(value || "")
+    .split(";")
+    .map((item) => item.trim())
+    .filter(Boolean);
+}
+
+/**
+ * Returns true when at least one selected filter value appears in a row value array.
+ * @param {Array<string>} selectedValues
+ * @param {Array<string>} rowValues
+ * @returns {boolean}
+ */
+function hasAnySelectedValue(selectedValues, rowValues) {
+  if (!selectedValues.length) return true;
+  return rowValues.some((value) => selectedValues.includes(value));
+}
+
+/**
+ * Joins multiple values for display while preserving the CSV style.
+ * @param {Array<string>} values
+ * @returns {string}
+ */
+function joinMultiValue(values) {
+  return values.filter(Boolean).join("; ");
+}
+
+/**
+ * Extracts a stable Cvent venue key from the source URL.
+ * @param {unknown} sourceUrl
+ * @returns {string}
+ */
+function getVenueKeyFromSourceUrl(sourceUrl) {
+  const value = String(sourceUrl || "");
+  const match = value.match(/venue-([a-f0-9-]{20,})/i);
+  return match ? `venue-${match[1]}` : value;
+}
+
+/**
+ * Returns a normalized funnel status.
+ * @param {unknown} value
+ * @returns {string}
+ */
+function normalizeFunnelStatus(value) {
+  const status = String(value || "target")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+
+  return FUNNEL_STATUSES.some((item) => item.value === status) ? status : "target";
+}
+
+/**
+ * Formats a funnel status for display.
+ * @param {unknown} value
+ * @returns {string}
+ */
+function formatFunnelStatus(value) {
+  const status = normalizeFunnelStatus(value);
+  return FUNNEL_STATUSES.find((item) => item.value === status)?.label || status;
+}
+
+/**
+ * Returns whether the status is counted as active pipeline.
+ * @param {string} status
+ * @returns {boolean}
+ */
+function isPipelineStatus(status) {
+  return ["warm_intro", "demo_scheduled", "proposal_sent", "contracting"].includes(normalizeFunnelStatus(status));
+}
+
+/**
+ * Renders a status pill.
+ * @param {string} status
+ * @returns {string}
+ */
+function renderStatusPill(status) {
+  const normalized = normalizeFunnelStatus(status);
+  return `<span class="status-pill status-${escapeHtml(normalized)}">${escapeHtml(formatFunnelStatus(normalized))}</span>`;
+}
+
+/**
+ * Returns the ARR value from CRM overrides or falls back to target ARR.
+ * @param {object} row
+ * @returns {number}
+ */
+function getTrackedAnnualValue(row) {
+  if (row.funnelStatus === "signed") {
+    return toNumber(row.signedAnnualValue || row.expectedAnnualValue || row.targetArr);
+  }
+
+  return toNumber(row.expectedAnnualValue || row.targetArr);
+}
+
+/**
+ * Applies any CRM override to a normalized row.
+ * @param {object} row
+ * @returns {object}
+ */
+function applyLeadOverride(row) {
+  const venueKey = getVenueKeyFromSourceUrl(row.sourceUrl) || `${row.propertyName}|${row.city}|${row.state}`;
+  const sourceUrlKey = String(row.sourceUrl || "");
+  const override = appState.leadOverrides[venueKey] || appState.leadOverrides[sourceUrlKey] || null;
+  const hasLeadOverride = Boolean(override);
+  const funnelStatus = normalizeFunnelStatus(hasLeadOverride ? override.funnelStatus : row.funnelStatus);
+
+  return {
+    ...row,
+    venueKey,
+    hasLeadOverride,
+    funnelStatus,
+    signedAnnualValue: toNumber((hasLeadOverride ? override.signedAnnualValue : row.signedAnnualValue) || 0),
+    expectedAnnualValue: toNumber((hasLeadOverride ? override.expectedAnnualValue : row.expectedAnnualValue) || 0),
+    leadNotes: String((hasLeadOverride ? override.notes : row.leadNotes || row.notes) || "").trim(),
+    overrideSource: hasLeadOverride ? String(override.source || "lead-overrides.json").trim() : "",
+  };
+}
+
+
+/**
  * Assigns a simple Inntegral target tier from total event space.
  * @param {number} eventSpace
  * @returns {string}
@@ -637,15 +1059,40 @@ function getTier(eventSpace) {
  * @param {unknown} value
  * @returns {string}
  */
-function normalizeManagementCompany(value) {
+function normalizeSingleManagementCompany(value) {
   const raw = String(value || "").trim();
   const normalized = raw.toLowerCase();
 
-  if (!raw) return "Unknown";
+  if (!raw) return "";
   if (normalized.includes("marriott")) return "Marriott";
   if (normalized.includes("hilton")) return "Hilton";
 
   return raw;
+}
+
+function normalizeManagementCompany(value) {
+  const companies = splitMultiValue(value).map(normalizeSingleManagementCompany).filter(Boolean);
+  return companies.length ? joinMultiValue(companies) : "Unknown";
+}
+
+/**
+ * Normalizes ownership/REIT fields imported from enrichment columns.
+ * @param {unknown} value
+ * @returns {string}
+ */
+function normalizeOwnershipGroup(value) {
+  const groups = splitMultiValue(value);
+  return groups.length ? joinMultiValue(groups) : "Unknown";
+}
+
+/**
+ * Formats the ownership tag shown on property cards.
+ * @param {string} ownershipGroup
+ * @returns {string}
+ */
+function formatOwnershipTag(ownershipGroup) {
+  if (!ownershipGroup || ownershipGroup === "Unknown") return "";
+  return `Owned by ${ownershipGroup}`;
 }
 
 /**
@@ -656,6 +1103,30 @@ function normalizeManagementCompany(value) {
 function formatManagementTag(managementCompany) {
   if (!managementCompany || managementCompany === "Unknown") return "";
   return `Managed by ${managementCompany}`;
+}
+
+/**
+ * Renders management tags for all managers attached to a row.
+ * @param {object} row
+ * @returns {string}
+ */
+function renderManagementTags(row) {
+  return row.managementCompanies
+    .filter((company) => company && company !== "Unknown")
+    .map((company) => `<span class="management-pill">${escapeHtml(formatManagementTag(company))}</span>`)
+    .join("");
+}
+
+/**
+ * Renders ownership tags for all owners attached to a row.
+ * @param {object} row
+ * @returns {string}
+ */
+function renderOwnershipTags(row) {
+  return row.ownershipGroups
+    .filter((owner) => owner && owner !== "Unknown")
+    .map((owner) => `<span class="ownership-pill">${escapeHtml(formatOwnershipTag(owner))}</span>`)
+    .join("");
 }
 
 
@@ -739,21 +1210,52 @@ function normalizeRow(row) {
   if (["VENUES", "PROMOTIONS", "DESTINATIONS", "DISCOVER"].includes(propertyName.toUpperCase())) return null;
 
   const tier = getTier(totalEventSpaceSqFt);
-  const managementCompany = normalizeManagementCompany(
+  const rawBrandChain = String(row.brandChain || "Unknown").trim() || "Unknown";
+  const brandChains = splitMultiValue(rawBrandChain);
+  const brandChain = brandChains.length ? joinMultiValue(brandChains) : "Unknown";
+
+  const rawManagementCompany =
     row.managementCompany ||
     row["Management Company"] ||
     row.managedBy ||
     row["Managed By"] ||
-    ""
-  );
+    "";
+  const managementCompanies = splitMultiValue(rawManagementCompany)
+    .map(normalizeSingleManagementCompany)
+    .filter(Boolean);
+  const managementCompany = managementCompanies.length ? joinMultiValue(managementCompanies) : "Unknown";
+
+  const rawOwnershipGroup =
+    row.ownerCompany ||
+    row.ownershipGroup ||
+    row.ownerGroup ||
+    row.propertyOwner ||
+    row.owner ||
+    row.reit ||
+    row.REIT ||
+    row["ownerCompany"] ||
+    row["Owner Company"] ||
+    row["Ownership Group"] ||
+    row["Owner Group"] ||
+    row["Property Owner"] ||
+    row["Owner"] ||
+    "";
+  const ownershipGroups = splitMultiValue(rawOwnershipGroup);
+  const ownershipGroup = ownershipGroups.length ? joinMultiValue(ownershipGroups) : "Unknown";
 
   const normalizedRow = {
     propertyName,
     city,
     state,
     venueType: String(row.venueType || "").trim(),
-    brandChain: String(row.brandChain || "Unknown").trim() || "Unknown",
+    brandChain,
+    brandChains: brandChains.length ? brandChains : ["Unknown"],
     managementCompany,
+    managementCompanies: managementCompanies.length ? managementCompanies : ["Unknown"],
+    ownershipGroup,
+    ownershipGroups: ownershipGroups.length ? ownershipGroups : ["Unknown"],
+    ownerType: String(row.ownerType || row["ownerType"] || row["Owner Type"] || "").trim(),
+    ownershipSource: String(row.ownerSource || row.ownershipSource || row["ownerSource"] || row["Ownership Source"] || "").trim(),
     eventRooms: toNumber(row.eventRooms),
     guestRooms: toNumber(row.guestRooms),
     largestRoomSqFt: toNumber(row.largestRoomSqFt),
@@ -772,10 +1274,10 @@ function normalizeRow(row) {
     tier,
   };
 
-  return {
+  return applyLeadOverride({
     ...normalizedRow,
     ...calculatePricing(normalizedRow),
-  };
+  });
 }
 
 /**
@@ -799,8 +1301,10 @@ function loadRows(rows) {
 
 /** Populates filter dropdowns from the loaded dataset. */
 function populateFilterOptions() {
-  setOptions(els.brandFilter, uniqueValues(appState.rows.map((row) => row.brandChain)));
-  setOptions(els.managementFilter, uniqueValues(appState.rows.map((row) => row.managementCompany).filter((value) => value && value !== "Unknown")));
+  setOptions(els.brandFilter, uniqueValues(appState.rows.flatMap((row) => row.brandChains)));
+  setOptions(els.managementFilter, uniqueValues(appState.rows.flatMap((row) => row.managementCompanies).filter((value) => value && value !== "Unknown")));
+  setOptions(els.ownershipFilter, uniqueValues(appState.rows.flatMap((row) => row.ownershipGroups).filter((value) => value && value !== "Unknown")));
+  setOptions(els.statusFilter, FUNNEL_STATUSES.map((item) => item.label));
   setOptions(els.stateFilter, uniqueValues(appState.rows.map((row) => row.state)));
   setOptions(els.venueTypeFilter, uniqueValues(appState.rows.map((row) => row.venueType)));
   setOptions(els.tierFilter, ["Core", "Large", "Convention", "Mega"]);
@@ -965,6 +1469,8 @@ function applyFilters() {
   const query = els.searchInput.value.trim().toLowerCase();
   const brands = getMultiSelectValues(els.brandFilter);
   const managers = getMultiSelectValues(els.managementFilter);
+  const owners = getMultiSelectValues(els.ownershipFilter);
+  const statuses = getMultiSelectValues(els.statusFilter);
   const states = getMultiSelectValues(els.stateFilter);
   const venueTypes = getMultiSelectValues(els.venueTypeFilter);
   const tiers = getMultiSelectValues(els.tierFilter);
@@ -973,13 +1479,15 @@ function applyFilters() {
   const minGuestRooms = toNumber(els.minGuestRooms.value);
 
   appState.filteredRows = appState.rows.filter((row) => {
-    const haystack = [row.propertyName, row.city, row.state, row.venueType, row.brandChain, row.managementCompany, row.tier]
+    const haystack = [row.propertyName, row.city, row.state, row.venueType, row.brandChain, row.managementCompany, row.ownershipGroup, row.ownerType, row.funnelStatus, row.tier]
       .join(" ")
       .toLowerCase();
 
     if (query && !haystack.includes(query)) return false;
-    if (brands.length && !brands.includes(row.brandChain)) return false;
-    if (managers.length && !managers.includes(row.managementCompany)) return false;
+    if (!hasAnySelectedValue(brands, row.brandChains)) return false;
+    if (!hasAnySelectedValue(managers, row.managementCompanies)) return false;
+    if (!hasAnySelectedValue(owners, row.ownershipGroups)) return false;
+    if (statuses.length && !statuses.includes(formatFunnelStatus(row.funnelStatus))) return false;
     if (states.length && !states.includes(row.state)) return false;
     if (venueTypes.length && !venueTypes.includes(row.venueType)) return false;
     if (tiers.length && !tiers.includes(row.tier)) return false;
@@ -1021,15 +1529,60 @@ function sortRows(rows, sortKey) {
 function renderSummary() {
   const rows = appState.filteredRows;
   const estimatedArr = rows.reduce((sum, row) => sum + row.targetArr, 0);
+  const signedArr = rows
+    .filter((row) => row.funnelStatus === "signed")
+    .reduce((sum, row) => sum + getTrackedAnnualValue(row), 0);
+  const pipelineArr = rows
+    .filter((row) => isPipelineStatus(row.funnelStatus))
+    .reduce((sum, row) => sum + getTrackedAnnualValue(row), 0);
+  const targetLeadArr = rows
+    .filter((row) => !["signed", "lost", "not_fit"].includes(row.funnelStatus) && !isPipelineStatus(row.funnelStatus))
+    .reduce((sum, row) => sum + getTrackedAnnualValue(row), 0);
+  const totalTrackedArr = signedArr + pipelineArr + targetLeadArr;
   const cityCount = new Set(rows.map((row) => `${row.city}, ${row.state}`)).size;
 
   els.filteredCount.textContent = formatNumber(rows.length);
   els.estimatedArr.textContent = `$${formatNumber(estimatedArr)}`;
-  els.arrProgress.textContent = `${((estimatedArr / 1000000) * 100).toFixed(1)}%`;
+  els.arrProgress.textContent = `${((signedArr / ARR_GOAL) * 100).toFixed(1)}%`;
   els.cityCount.textContent = formatNumber(cityCount);
   els.resultRange.textContent = `${formatNumber(rows.length)} of ${formatNumber(appState.rows.length)} loaded`;
-}
 
+  els.signedArr.textContent = formatCurrency(signedArr);
+  els.pipelineArr.textContent = formatCurrency(pipelineArr);
+  els.targetLeadArr.textContent = formatCurrency(targetLeadArr);
+  els.totalTrackedArr.textContent = formatCurrency(totalTrackedArr);
+
+  const signedGoalPercent = (signedArr / ARR_GOAL) * 100;
+  const pipelineGoalPercent = (pipelineArr / ARR_GOAL) * 100;
+  const targetGoalPercent = (targetLeadArr / ARR_GOAL) * 100;
+
+  const signedWidth = Math.min(100, signedGoalPercent);
+  const pipelineWidth = Math.min(Math.max(0, 100 - signedWidth), pipelineGoalPercent);
+  const targetWidth = Math.min(Math.max(0, 100 - signedWidth - pipelineWidth), targetGoalPercent);
+
+  els.signedArrSegment.style.width = `${Math.max(0, signedWidth)}%`;
+  els.pipelineArrSegment.style.width = `${Math.max(0, pipelineWidth)}%`;
+  els.targetArrSegment.style.width = `${Math.max(0, targetWidth)}%`;
+  els.arrMeterLegend.innerHTML = `
+    <span class="legend-signed">Signed: ${formatCurrency(signedArr)} / ${signedGoalPercent.toFixed(1)}% of $1M</span>
+    <span class="legend-pipeline">Pipeline: ${formatCurrency(pipelineArr)} / ${pipelineGoalPercent.toFixed(1)}% of $1M</span>
+    <span class="legend-target">Targets: ${formatCurrency(targetLeadArr)} / ${targetGoalPercent.toFixed(1)}% of $1M</span>
+  `;
+
+  const overrideCount = Object.keys(appState.leadOverrides).length;
+  const fileVersionLabel = appState.leadOverridesFileVersion
+    ? new Date(appState.leadOverridesFileVersion).toLocaleString()
+    : "none";
+  const localVersionLabel = appState.leadOverridesLocalVersion
+    ? new Date(appState.leadOverridesLocalVersion).toLocaleString()
+    : "none";
+
+  els.overrideStatus.textContent = appState.leadOverridesLoaded
+    ? `Loaded ${formatNumber(overrideCount)} lead override record(s). File version: ${fileVersionLabel}. Local version: ${localVersionLabel}${appState.leadOverridesDirty ? " · changes not exported" : ""}.`
+    : `No lead-overrides.json file loaded yet. Local version: ${localVersionLabel}${appState.leadOverridesDirty ? " · changes not exported" : ""}.`;
+
+  els.overridesDirtyAlert.classList.toggle("hidden", !appState.leadOverridesDirty);
+}
 /** Renders a simple bar chart for top brands/chains. */
 function renderBrandChart() {
   const counts = countBy(appState.filteredRows, (row) => row.brandChain || "Unknown")
@@ -1308,10 +1861,12 @@ function renderCards() {
   els.results.className = "cards";
   els.results.innerHTML = appState.filteredRows
     .map((row) => `
-      <article class="property-card">
+      <article class="property-card ${row.hasLeadOverride ? `status-card-${escapeHtml(row.funnelStatus)}` : ""}">
+        ${row.hasLeadOverride ? `<div class="status-flag status-flag-${escapeHtml(row.funnelStatus)}">${escapeHtml(formatFunnelStatus(row.funnelStatus))}</div>` : ""}
         <div class="card-hover-actions">
           ${row.sourceUrl ? `<a href="${escapeHtml(row.sourceUrl)}" target="_blank" rel="noopener">Cvent</a>` : ""}
           ${hasHospitalityOnlineUrl(row) ? `<a href="${escapeHtml(row.hospitalityOnlineUrl)}" target="_blank" rel="noopener">Hospitality Online</a>` : ""}
+          <button type="button" data-edit-key="${escapeHtml(row.venueKey)}">Edit</button>
         </div>
         <img src="${escapeHtml(getImageSrc(row))}" alt="" onerror="this.style.display='none'" />
         <div class="card-body">
@@ -1326,12 +1881,15 @@ function renderCards() {
           <div class="revenue-grid">
             <div class="revenue-item"><strong>${formatCurrency(row.listArr)}</strong><span>List price</span></div>
             <div class="revenue-item"><strong>${formatCurrency(row.targetArr)}</strong><span>20% off</span></div>
-            <div class="revenue-item"><strong>${((row.targetArr / 1000000) * 100).toFixed(1)}%</strong><span>of $1M ARR</span></div>
+            <div class="revenue-item"><strong>${formatCurrency(getTrackedAnnualValue(row))}</strong><span>${row.funnelStatus === "signed" ? "Signed ARR" : "Tracked ARR"}</span></div>
+            <div class="revenue-item"><strong>${((getTrackedAnnualValue(row) / ARR_GOAL) * 100).toFixed(1)}%</strong><span>of $1M ARR</span></div>
           </div>
           <div class="tag-row">
             <span class="tier-pill">${escapeHtml(row.tier)}</span>
-            ${row.managementCompany && row.managementCompany !== "Unknown" ? `<span class="management-pill">${escapeHtml(formatManagementTag(row.managementCompany))}</span>` : ""}
+            ${renderManagementTags(row)}
+            ${renderOwnershipTags(row)}
           </div>
+          ${row.leadNotes ? `<div class="meta" style="margin-top:10px;">${escapeHtml(row.leadNotes)}</div>` : ""}
         </div>
       </article>
     `)
@@ -1351,6 +1909,8 @@ function renderList() {
           <th>State</th>
           <th>Brand / chain</th>
           <th>Management company</th>
+          <th>Owner</th>
+          <th>Status</th>
           <th>Type</th>
           <th>Event rooms</th>
           <th>Guest rooms</th>
@@ -1359,7 +1919,9 @@ function renderList() {
           <th>Tier</th>
           <th>List ARR</th>
           <th>Target ARR<br><small>20% off</small></th>
+          <th>Tracked ARR</th>
           <th>Target %</th>
+          <th>Edit</th>
         </tr>
       </thead>
       <tbody>
@@ -1372,6 +1934,8 @@ function renderList() {
               <td>${escapeHtml(row.state)}</td>
               <td>${escapeHtml(row.brandChain)}</td>
               <td>${escapeHtml(row.managementCompany)}</td>
+              <td>${escapeHtml(row.ownershipGroup)}</td>
+              <td>${escapeHtml(formatFunnelStatus(row.funnelStatus))}</td>
               <td>${escapeHtml(row.venueType)}</td>
               <td>${formatNumber(row.eventRooms)}</td>
               <td>${formatNumber(row.guestRooms)}</td>
@@ -1380,7 +1944,9 @@ function renderList() {
               <td>${escapeHtml(row.tier)}</td>
               <td>${formatCurrency(row.listArr)}</td>
               <td>${formatCurrency(row.targetArr)}</td>
-              <td>${((row.targetArr / 1000000) * 100).toFixed(1)}%</td>
+              <td>${formatCurrency(getTrackedAnnualValue(row))}</td>
+              <td>${((getTrackedAnnualValue(row) / ARR_GOAL) * 100).toFixed(1)}%</td>
+              <td><button type="button" data-edit-key="${escapeHtml(row.venueKey)}">Edit</button></td>
             </tr>
           `)
           .join("")}
@@ -1394,6 +1960,8 @@ function resetFilters() {
   els.searchInput.value = "";
   clearMultiSelect(els.brandFilter);
   clearMultiSelect(els.managementFilter);
+  clearMultiSelect(els.ownershipFilter);
+  clearMultiSelect(els.statusFilter);
   clearMultiSelect(els.stateFilter);
   clearMultiSelect(els.venueTypeFilter);
   clearMultiSelect(els.tierFilter);
@@ -1402,6 +1970,239 @@ function resetFilters() {
   els.minGuestRooms.value = "";
   els.sortSelect.value = "eventSpaceDesc";
   applyFilters();
+}
+
+
+
+/**
+ * Creates the JSON format used for exported lead overrides.
+ * @param {object} overrides
+ * @param {string} version
+ * @returns {{_metadata: object, properties: object}}
+ */
+function createLeadOverridesPayload(overrides, version = new Date().toISOString()) {
+  return {
+    _metadata: {
+      version,
+      exportedAt: version,
+      schema: "inntegral-lead-overrides-v1",
+    },
+    properties: overrides || {},
+  };
+}
+
+/**
+ * Supports both the new versioned format and the older plain-object format.
+ * @param {object} payload
+ * @returns {{metadata: object, properties: object}}
+ */
+function parseLeadOverridesPayload(payload) {
+  if (payload && payload._metadata && payload.properties && typeof payload.properties === "object") {
+    return {
+      metadata: payload._metadata || {},
+      properties: payload.properties || {},
+    };
+  }
+
+  return {
+    metadata: {},
+    properties: payload && typeof payload === "object" ? payload : {},
+  };
+}
+
+/**
+ * Compares ISO-like versions. Returns positive if left is newer.
+ * @param {string} left
+ * @param {string} right
+ * @returns {number}
+ */
+function compareOverrideVersions(left, right) {
+  const leftTime = Date.parse(left || "");
+  const rightTime = Date.parse(right || "");
+
+  if (Number.isFinite(leftTime) && Number.isFinite(rightTime)) return leftTime - rightTime;
+  if (Number.isFinite(leftTime) && !Number.isFinite(rightTime)) return 1;
+  if (!Number.isFinite(leftTime) && Number.isFinite(rightTime)) return -1;
+  return String(left || "").localeCompare(String(right || ""));
+}
+
+/**
+ * Saves override payload and metadata to localStorage.
+ * @param {object} overrides
+ * @param {string} version
+ * @param {boolean} dirty
+ */
+function saveOverrideWorkingCopy(overrides, version, dirty) {
+  localStorage.setItem(
+    LEAD_OVERRIDES_STORAGE_KEY,
+    JSON.stringify(createLeadOverridesPayload(overrides, version), null, 2)
+  );
+  localStorage.setItem(
+    LEAD_OVERRIDES_META_STORAGE_KEY,
+    JSON.stringify({ version, dirty, savedAt: new Date().toISOString() })
+  );
+  appState.leadOverridesLocalVersion = version;
+  appState.leadOverridesDirty = Boolean(dirty);
+}
+
+/** Loads lead overrides from JSON plus any local working copy. */
+async function loadLeadOverrides() {
+  let fileProperties = {};
+  let fileMetadata = {};
+
+  try {
+    const response = await fetch("./lead-overrides.json", { cache: "no-store" });
+    if (response.ok) {
+      const parsedFile = parseLeadOverridesPayload(await response.json());
+      fileProperties = parsedFile.properties;
+      fileMetadata = parsedFile.metadata;
+      appState.leadOverridesLoaded = true;
+      appState.leadOverridesFileVersion = String(fileMetadata.version || "");
+    }
+  } catch (error) {
+    appState.leadOverridesLoaded = false;
+    console.warn("LEAD_OVERRIDES_LOAD_FAILED", error);
+  }
+
+  let localProperties = null;
+  let localMetadata = {};
+
+  try {
+    const localCopy = localStorage.getItem(LEAD_OVERRIDES_STORAGE_KEY);
+    const localMeta = localStorage.getItem(LEAD_OVERRIDES_META_STORAGE_KEY);
+
+    if (localMeta) {
+      localMetadata = JSON.parse(localMeta) || {};
+    }
+
+    if (localCopy) {
+      const parsedLocal = parseLeadOverridesPayload(JSON.parse(localCopy));
+      localProperties = parsedLocal.properties;
+      localMetadata = {
+        ...localMetadata,
+        ...parsedLocal.metadata,
+      };
+    }
+  } catch (error) {
+    localProperties = null;
+    localMetadata = {};
+    console.warn("LEAD_OVERRIDES_LOCAL_COPY_FAILED", error);
+  }
+
+  const fileVersion = String(appState.leadOverridesFileVersion || "");
+  const localVersion = String(localMetadata.version || "");
+  const localIsNewer = localProperties && compareOverrideVersions(localVersion, fileVersion) > 0;
+  const fileIsSameOrNewer = fileVersion && (!localProperties || compareOverrideVersions(fileVersion, localVersion) >= 0);
+
+  if (localIsNewer) {
+    appState.leadOverrides = localProperties;
+    appState.leadOverridesLocalVersion = localVersion;
+    appState.leadOverridesDirty = Boolean(localMetadata.dirty);
+    return;
+  }
+
+  appState.leadOverrides = fileProperties;
+  appState.leadOverridesLocalVersion = fileVersion;
+  appState.leadOverridesDirty = false;
+
+  if (fileIsSameOrNewer) {
+    // The loaded file already includes the local changes, so clear stale browser warnings.
+    localStorage.removeItem(LEAD_OVERRIDES_STORAGE_KEY);
+    localStorage.removeItem(LEAD_OVERRIDES_META_STORAGE_KEY);
+  }
+}
+
+/** Saves current override working copy to localStorage. */
+function saveOverridesToLocalStorage() {
+  const version = new Date().toISOString();
+  saveOverrideWorkingCopy(appState.leadOverrides, version, true);
+}
+
+/** Downloads the current override JSON. */
+function downloadLeadOverrides() {
+  const version = new Date().toISOString();
+  const payload = createLeadOverridesPayload(appState.leadOverrides, version);
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = "lead-overrides.json";
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(url);
+
+  // The user has downloaded the newest copy, so the in-browser working copy is no longer dirty.
+  saveOverrideWorkingCopy(appState.leadOverrides, version, false);
+  renderSummary();
+}
+
+/** Opens the lead override modal. */
+function openLeadEditModal(venueKey) {
+  const row = appState.rows.find((item) => item.venueKey === venueKey);
+  if (!row) return;
+
+  appState.activeEditKey = venueKey;
+  els.leadEditTitle.textContent = "Edit lead override";
+  els.leadEditPropertyName.textContent = row.propertyName;
+  els.leadEditPropertyMeta.textContent = `${row.city}, ${row.state} · ${row.brandChain}`;
+  els.leadKeyInput.value = venueKey;
+  els.leadStatusInput.value = row.funnelStatus || "target";
+  els.expectedAnnualValueInput.value = row.expectedAnnualValue || "";
+  els.signedAnnualValueInput.value = row.signedAnnualValue || "";
+  els.leadNotesInput.value = row.leadNotes || "";
+  els.leadEditModal.classList.remove("hidden");
+}
+
+/** Closes the lead override modal. */
+function closeLeadEditModal() {
+  appState.activeEditKey = "";
+  els.leadEditModal.classList.add("hidden");
+}
+
+/** Saves the active modal override. */
+function saveLeadOverrideFromModal() {
+  const venueKey = appState.activeEditKey;
+  const row = appState.rows.find((item) => item.venueKey === venueKey);
+  if (!venueKey || !row) return;
+
+  appState.leadOverrides[venueKey] = {
+    propertyName: row.propertyName,
+    city: row.city,
+    state: row.state,
+    funnelStatus: normalizeFunnelStatus(els.leadStatusInput.value),
+    expectedAnnualValue: toNumber(els.expectedAnnualValueInput.value),
+    signedAnnualValue: toNumber(els.signedAnnualValueInput.value),
+    notes: els.leadNotesInput.value.trim(),
+    source: "in-app override",
+    lastUpdated: new Date().toISOString().slice(0, 10),
+  };
+
+  saveOverridesToLocalStorage();
+  appState.rows = appState.rows.map(applyLeadOverride);
+  populateFilterOptions();
+  applyFilters();
+  closeLeadEditModal();
+}
+
+/** Clears the active modal override. */
+function clearLeadOverrideFromModal() {
+  const venueKey = appState.activeEditKey;
+  if (!venueKey) return;
+
+  delete appState.leadOverrides[venueKey];
+  saveOverridesToLocalStorage();
+  appState.rows = appState.rows.map(applyLeadOverride);
+  populateFilterOptions();
+  applyFilters();
+  closeLeadEditModal();
+}
+
+/** Populates the funnel status dropdown in the edit modal. */
+function populateLeadStatusInput() {
+  els.leadStatusInput.innerHTML = FUNNEL_STATUSES
+    .map((item) => `<option value="${escapeHtml(item.value)}">${escapeHtml(item.label)}</option>`)
+    .join("");
 }
 
 async function loadDefaultCsv() {
@@ -1443,8 +2244,25 @@ els.listViewBtn.addEventListener("click", () => {
   renderResults();
 });
 
+document.addEventListener("click", (event) => {
+  const editButton = event.target.closest("[data-edit-key]");
+  if (editButton) {
+    event.preventDefault();
+    openLeadEditModal(editButton.dataset.editKey);
+  }
+});
 
-loadDefaultCsv();
+els.downloadOverridesBtn.addEventListener("click", downloadLeadOverrides);
+els.closeLeadEditBtn.addEventListener("click", closeLeadEditModal);
+els.saveLeadOverrideBtn.addEventListener("click", saveLeadOverrideFromModal);
+els.clearLeadOverrideBtn.addEventListener("click", clearLeadOverrideFromModal);
+els.leadEditModal.addEventListener("click", (event) => {
+  if (event.target === els.leadEditModal) closeLeadEditModal();
+});
+
+populateLeadStatusInput();
+loadLeadOverrides().then(loadDefaultCsv);
+
 
 </script>
 </body>
