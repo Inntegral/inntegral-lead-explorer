@@ -470,7 +470,9 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
 .status-pill.status-contracting,
 .status-pill.status-proposal_sent,
 .status-pill.status-demo_scheduled,
-.status-pill.status-warm_intro { color: #854d0e; background: #fef3c7; }
+.status-pill.status-warm_intro,
+.status-pill.status-path_identified { color: #854d0e; background: #fef3c7; }
+.status-pill.status-expansion_opportunity { color: #1e40af; background: #dbeafe; }
 .status-pill.status-lost,
 .status-pill.status-not_fit { color: #991b1b; background: #fee2e2; }
 .property-card.status-card-target {
@@ -481,10 +483,15 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
   border: 2px solid #16a34a;
   box-shadow: 0 18px 45px rgba(22, 163, 74, 0.18);
 }
+.property-card.status-card-expansion_opportunity {
+  border: 2px solid #2563eb;
+  box-shadow: 0 18px 45px rgba(37, 99, 235, 0.15);
+}
 .property-card.status-card-contracting,
 .property-card.status-card-proposal_sent,
 .property-card.status-card-demo_scheduled,
-.property-card.status-card-warm_intro {
+.property-card.status-card-warm_intro,
+.property-card.status-card-path_identified {
   border: 2px solid #eab308;
   box-shadow: 0 18px 45px rgba(234, 179, 8, 0.16);
 }
@@ -512,10 +519,12 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
 }
 .status-flag.status-flag-target { background: rgba(71, 85, 105, 0.94); }
 .status-flag.status-flag-signed { background: rgba(22, 163, 74, 0.94); }
+.status-flag.status-flag-expansion_opportunity { background: rgba(37, 99, 235, 0.96); }
 .status-flag.status-flag-contracting,
 .status-flag.status-flag-proposal_sent,
 .status-flag.status-flag-demo_scheduled,
-.status-flag.status-flag-warm_intro { background: rgba(202, 138, 4, 0.96); }
+.status-flag.status-flag-warm_intro,
+.status-flag.status-flag-path_identified { background: rgba(202, 138, 4, 0.96); }
 .status-flag.status-flag-lost,
 .status-flag.status-flag-not_fit { background: rgba(185, 28, 28, 0.96); }
 .property-card:hover .status-flag {
@@ -675,7 +684,6 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
     <section class="panel crm-panel">
       <div class="panel-heading" style="padding:0 0 12px;">
         <h2>ARR goal meter</h2>
-        <span>Green = signed, yellow = active pipeline, gray = target potential</span>
       </div>
       <div class="crm-summary-grid">
         <div class="crm-summary-item"><strong id="signedArr">$0</strong><span>Signed ARR</span></div>
@@ -784,11 +792,14 @@ const PRICING_MODELS = {
 };
 
 const TARGET_PRICE_MULTIPLIER = 0.80;
+const NA_FILTER_VALUE = "N/A";
 const ARR_GOAL = 1000000;
 const LEAD_OVERRIDES_STORAGE_KEY = "inntegralLeadOverridesWorkingCopy";
 const LEAD_OVERRIDES_META_STORAGE_KEY = "inntegralLeadOverridesWorkingCopyMeta";
 const FUNNEL_STATUSES = [
   { value: "target", label: "Target" },
+  { value: "expansion_opportunity", label: "Expansion opportunity" },
+  { value: "path_identified", label: "Path identified" },
   { value: "researched", label: "Researched" },
   { value: "warm_intro", label: "Warm intro" },
   { value: "demo_scheduled", label: "Demo scheduled" },
@@ -936,7 +947,34 @@ function splitMultiValue(value) {
  */
 function hasAnySelectedValue(selectedValues, rowValues) {
   if (!selectedValues.length) return true;
-  return rowValues.some((value) => selectedValues.includes(value));
+
+  const cleanRowValues = (rowValues || []).filter((value) => value && value !== "Unknown");
+
+  if (selectedValues.includes(NA_FILTER_VALUE) && !cleanRowValues.length) {
+    return true;
+  }
+
+  return cleanRowValues.some((value) => selectedValues.includes(value));
+}
+
+/**
+ * Adds an N/A option to a filter when at least one row has no real value for that filter.
+ * @param {Array<string>} values
+ * @param {boolean} hasMissingValues
+ * @returns {Array<string>}
+ */
+function addNaFilterOption(values, hasMissingValues) {
+  const cleanValues = values.filter((value) => value && value !== "Unknown" && value !== NA_FILTER_VALUE);
+  return hasMissingValues ? [NA_FILTER_VALUE, ...cleanValues] : cleanValues;
+}
+
+/**
+ * Checks whether a normalized multi-value field has at least one real value.
+ * @param {Array<string>} values
+ * @returns {boolean}
+ */
+function hasRealMultiValue(values) {
+  return Boolean((values || []).some((value) => value && value !== "Unknown"));
 }
 
 /**
@@ -990,7 +1028,7 @@ function formatFunnelStatus(value) {
  * @returns {boolean}
  */
 function isPipelineStatus(status) {
-  return ["warm_intro", "demo_scheduled", "proposal_sent", "contracting"].includes(normalizeFunnelStatus(status));
+  return ["path_identified", "warm_intro", "demo_scheduled", "proposal_sent", "contracting"].includes(normalizeFunnelStatus(status));
 }
 
 /**
@@ -1301,12 +1339,48 @@ function loadRows(rows) {
 
 /** Populates filter dropdowns from the loaded dataset. */
 function populateFilterOptions() {
-  setOptions(els.brandFilter, uniqueValues(appState.rows.flatMap((row) => row.brandChains)));
-  setOptions(els.managementFilter, uniqueValues(appState.rows.flatMap((row) => row.managementCompanies).filter((value) => value && value !== "Unknown")));
-  setOptions(els.ownershipFilter, uniqueValues(appState.rows.flatMap((row) => row.ownershipGroups).filter((value) => value && value !== "Unknown")));
-  setOptions(els.statusFilter, FUNNEL_STATUSES.map((item) => item.label));
-  setOptions(els.stateFilter, uniqueValues(appState.rows.map((row) => row.state)));
-  setOptions(els.venueTypeFilter, uniqueValues(appState.rows.map((row) => row.venueType)));
+  setOptions(
+    els.brandFilter,
+    addNaFilterOption(
+      uniqueValues(appState.rows.flatMap((row) => row.brandChains)),
+      appState.rows.some((row) => !hasRealMultiValue(row.brandChains))
+    )
+  );
+  setOptions(
+    els.managementFilter,
+    addNaFilterOption(
+      uniqueValues(appState.rows.flatMap((row) => row.managementCompanies)),
+      appState.rows.some((row) => !hasRealMultiValue(row.managementCompanies))
+    )
+  );
+  setOptions(
+    els.ownershipFilter,
+    addNaFilterOption(
+      uniqueValues(appState.rows.flatMap((row) => row.ownershipGroups)),
+      appState.rows.some((row) => !hasRealMultiValue(row.ownershipGroups))
+    )
+  );
+  setOptions(
+    els.statusFilter,
+    addNaFilterOption(
+      FUNNEL_STATUSES.map((item) => item.label),
+      appState.rows.some((row) => !row.hasLeadOverride)
+    )
+  );
+  setOptions(
+    els.stateFilter,
+    addNaFilterOption(
+      uniqueValues(appState.rows.map((row) => row.state)),
+      appState.rows.some((row) => !row.state)
+    )
+  );
+  setOptions(
+    els.venueTypeFilter,
+    addNaFilterOption(
+      uniqueValues(appState.rows.map((row) => row.venueType)),
+      appState.rows.some((row) => !row.venueType)
+    )
+  );
   setOptions(els.tierFilter, ["Core", "Large", "Convention", "Mega"]);
 }
 
@@ -1487,10 +1561,10 @@ function applyFilters() {
     if (!hasAnySelectedValue(brands, row.brandChains)) return false;
     if (!hasAnySelectedValue(managers, row.managementCompanies)) return false;
     if (!hasAnySelectedValue(owners, row.ownershipGroups)) return false;
-    if (statuses.length && !statuses.includes(formatFunnelStatus(row.funnelStatus))) return false;
-    if (states.length && !states.includes(row.state)) return false;
-    if (venueTypes.length && !venueTypes.includes(row.venueType)) return false;
-    if (tiers.length && !tiers.includes(row.tier)) return false;
+    if (!hasAnySelectedValue(statuses, row.hasLeadOverride ? [formatFunnelStatus(row.funnelStatus)] : [])) return false;
+    if (!hasAnySelectedValue(states, row.state ? [row.state] : [])) return false;
+    if (!hasAnySelectedValue(venueTypes, row.venueType ? [row.venueType] : [])) return false;
+    if (!hasAnySelectedValue(tiers, row.tier ? [row.tier] : [])) return false;
     if (minEventSpace && row.totalEventSpaceSqFt < minEventSpace) return false;
     if (minEventRooms && row.eventRooms < minEventRooms) return false;
     if (minGuestRooms && row.guestRooms < minGuestRooms) return false;
@@ -1577,11 +1651,11 @@ function renderSummary() {
     ? new Date(appState.leadOverridesLocalVersion).toLocaleString()
     : "none";
 
-  els.overrideStatus.textContent = appState.leadOverridesLoaded
+  /*els.overrideStatus.textContent = appState.leadOverridesLoaded
     ? `Loaded ${formatNumber(overrideCount)} lead override record(s). File version: ${fileVersionLabel}. Local version: ${localVersionLabel}${appState.leadOverridesDirty ? " · changes not exported" : ""}.`
     : `No lead-overrides.json file loaded yet. Local version: ${localVersionLabel}${appState.leadOverridesDirty ? " · changes not exported" : ""}.`;
 
-  els.overridesDirtyAlert.classList.toggle("hidden", !appState.leadOverridesDirty);
+  els.overridesDirtyAlert.classList.toggle("hidden", !appState.leadOverridesDirty);*/
 }
 /** Renders a simple bar chart for top brands/chains. */
 function renderBrandChart() {

@@ -1,7 +1,7 @@
 {
   "_metadata": {
-    "version": "2026-06-17T07:25:09.772Z",
-    "exportedAt": "2026-06-17T07:25:09.772Z",
+    "version": "2026-06-17T15:46:13.431Z",
+    "exportedAt": "2026-06-17T15:46:13.431Z",
     "schema": "inntegral-lead-overrides-v1"
   },
   "properties": {
@@ -13,6 +13,72 @@
       "expectedAnnualValue": 39600,
       "signedAnnualValue": 39600,
       "notes": "Based on $3,300/month paid annually.",
+      "source": "in-app override",
+      "lastUpdated": "2026-06-17"
+    },
+    "venue-b07c828d-b8bb-4636-8e90-1f2722118678": {
+      "propertyName": "Gaylord Opryland Resort & Convention Center",
+      "city": "Nashville",
+      "state": "TN",
+      "funnelStatus": "path_identified",
+      "expectedAnnualValue": 0,
+      "signedAnnualValue": 0,
+      "notes": "Path identified through Gaylord National and Ryman relationship.",
+      "source": "in-app override",
+      "lastUpdated": "2026-06-17"
+    },
+    "venue-c58fc69c-e19f-4112-ba54-ebdf884cfd8d": {
+      "propertyName": "Gaylord Rockies Resort & Convention Center",
+      "city": "Aurora",
+      "state": "CO",
+      "funnelStatus": "path_identified",
+      "expectedAnnualValue": 0,
+      "signedAnnualValue": 0,
+      "notes": "Path identified through Gaylord National and Ryman relationship.",
+      "source": "in-app override",
+      "lastUpdated": "2026-06-17"
+    },
+    "venue-a7351cd7-07dc-4831-a717-17a44d4c5b70": {
+      "propertyName": "Gaylord Texan Resort & Convention Center",
+      "city": "Grapevine",
+      "state": "TX",
+      "funnelStatus": "path_identified",
+      "expectedAnnualValue": 0,
+      "signedAnnualValue": 0,
+      "notes": "Path identified through Gaylord National and Ryman relationship.",
+      "source": "in-app override",
+      "lastUpdated": "2026-06-17"
+    },
+    "venue-0d4b0f4e-e40c-4bcc-984e-821d599ed597": {
+      "propertyName": "Gaylord Palms Resort & Convention Center",
+      "city": "Kissimmee",
+      "state": "FL",
+      "funnelStatus": "path_identified",
+      "expectedAnnualValue": 0,
+      "signedAnnualValue": 0,
+      "notes": "Path identified through Gaylord National and Ryman relationship.",
+      "source": "in-app override",
+      "lastUpdated": "2026-06-17"
+    },
+    "venue-18e576be-5654-49d2-bf98-a704f0ba055a": {
+      "propertyName": "JW Marriott San Antonio Hill Country Resort & Spa",
+      "city": "San Antonio",
+      "state": "TX",
+      "funnelStatus": "path_identified",
+      "expectedAnnualValue": 0,
+      "signedAnnualValue": 0,
+      "notes": "Path identified through Gaylord National and Ryman relationship.",
+      "source": "in-app override",
+      "lastUpdated": "2026-06-17"
+    },
+    "venue-f32acfb7-f3df-45b9-b655-19ebe0e6ef75": {
+      "propertyName": "JW Marriott Phoenix Desert Ridge Resort & Spa",
+      "city": "Phoenix",
+      "state": "AZ",
+      "funnelStatus": "path_identified",
+      "expectedAnnualValue": 0,
+      "signedAnnualValue": 0,
+      "notes": "Path identified through Gaylord National and Ryman relationship.",
       "source": "in-app override",
       "lastUpdated": "2026-06-17"
     }
