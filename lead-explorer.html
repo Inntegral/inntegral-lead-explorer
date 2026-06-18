@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Inntegral Lead Explorer</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" />
   <style>
 :root {
   --bg: #eef3fb;
@@ -25,18 +26,60 @@ body {
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 }
 
+.top-filter-shell {
+  position: sticky;
+  top: 0;
+  z-index: 4200;
+  background: linear-gradient(135deg, #0f172a, #163b82 58%, #0f766e);
+  color: #fff;
+  box-shadow: 0 16px 45px rgba(15, 23, 42, 0.18);
+}
 .app-header {
   display: flex;
   justify-content: space-between;
   gap: 24px;
   align-items: center;
   padding: 34px 38px;
-  background: linear-gradient(135deg, #0f172a, #163b82 58%, #0f766e);
+  background: transparent;
   color: #fff;
 }
 
 .app-header h1 { margin: 0 0 6px; font-size: 34px; letter-spacing: -0.03em; }
 .app-header p { margin: 0; color: rgba(255,255,255,0.80); font-size: 15px; }
+.header-filter-status {
+  display: grid;
+  gap: 4px;
+  justify-items: end;
+  max-width: 520px;
+  text-align: right;
+}
+.header-filter-kicker {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.58);
+  font-weight: 900;
+}
+.active-filters-summary {
+  color: rgba(255,255,255,0.9);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.header-clear-filters {
+  min-height: 28px;
+  padding: 4px 9px;
+  border: 1px solid rgba(255,255,255,0.36);
+  border-radius: 999px;
+  background: rgba(255,255,255,0.12);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+}
+.header-clear-filters:hover {
+  background: rgba(255,255,255,0.24);
+  border-color: rgba(255,255,255,0.55);
+  color: #fff;
+}
 .header-actions, .view-toggle { display: flex; gap: 10px; }
 
 main { padding: 24px 32px 48px; }
@@ -55,6 +98,53 @@ main { padding: 24px 32px 48px; }
   flex-wrap: wrap;
   padding: 18px;
   margin-bottom: 18px;
+}
+
+.header-filters-popover {
+  position: static !important;
+  display: flex;
+  max-height: 0;
+  overflow: visible !important;
+  padding: 0 38px !important;
+  margin: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-10px);
+  border: 0 !important;
+  border-top: 1px solid rgba(255,255,255,0.14) !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  transition: max-height 220ms ease, padding 220ms ease, opacity 150ms ease, transform 180ms ease;
+}
+.top-filter-shell:hover .header-filters-popover,
+.top-filter-shell:focus-within .header-filters-popover,
+.header-filters-popover.open {
+  max-height: calc(100vh - 112px);
+  padding: 18px 38px 24px !important;
+  overflow-y: auto !important;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+.header-filters-popover .field label {
+  color: rgba(255,255,255,0.86);
+}
+.header-filters-popover input,
+.header-filters-popover select,
+.header-filters-popover .multi-select-control {
+  border-color: rgba(255,255,255,0.28);
+  background: rgba(255,255,255,0.96);
+}
+.header-filters-popover #resetFiltersBtn {
+  border-color: rgba(255,255,255,0.32);
+  background: rgba(255,255,255,0.13);
+  color: #fff;
+}
+.header-filters-popover #resetFiltersBtn:hover {
+  background: rgba(255,255,255,0.24);
+  color: #fff;
 }
 
 .status-panel strong { font-size: 15px; }
@@ -88,7 +178,7 @@ button.active, button:hover {
 
 .summary-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 16px;
   margin: 18px 0;
 }
@@ -210,10 +300,26 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
 @media (max-width: 1000px) {
   .summary-grid, .analytics-grid { grid-template-columns: 1fr; }
   .app-header { flex-direction: column; align-items: flex-start; }
+  .header-filter-status { justify-items: start; text-align: left; max-width: 100%; }
+  .header-filters-popover { padding-left: 18px !important; padding-right: 18px !important; }
+  .top-filter-shell:hover .header-filters-popover,
+  .top-filter-shell:focus-within .header-filters-popover,
+  .header-filters-popover.open { padding-left: 18px !important; padding-right: 18px !important; }
 }
 
 
 .hidden { display: none !important; }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 .alert-panel {
   padding: 16px 18px;
   margin-bottom: 18px;
@@ -590,37 +696,144 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
 .modal-body textarea { min-height: 90px; border: 1px solid var(--line); border-radius: 11px; padding: 9px 12px; font: inherit; resize: vertical; }
 @media (max-width: 1000px) { .crm-summary-grid, .modal-grid { grid-template-columns: 1fr; } }
 
+/* Breakdown sliders */
+.breakdowns-grid {
+  display: grid;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.breakdown-section {
+  overflow: hidden;
+}
+.breakdown-section .panel-heading {
+  padding-bottom: 8px;
+}
+.breakdown-slider {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 18px;
+  scroll-snap-type: x proximity;
+}
+.breakdown-slider::-webkit-scrollbar {
+  height: 10px;
+}
+.breakdown-slider::-webkit-scrollbar-track {
+  background: #eef2f7;
+  border-radius: 999px;
+}
+.breakdown-slider::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+.breakdown-card {
+  position: relative;
+  flex: 0 0 245px;
+  scroll-snap-align: start;
+  border: 1px solid #e7edf6;
+  background: linear-gradient(180deg, #ffffff, #f8fbff);
+  border-radius: 18px;
+  padding: 14px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+  transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+}
+.breakdown-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(20, 87, 217, 0.32);
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.13);
+}
+.breakdown-expand-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity 150ms ease, transform 150ms ease, color 150ms ease;
+  min-height: auto;
+  padding: 2px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-size: 15px;
+  font-weight: 900;
+  box-shadow: none;
+  line-height: 1;
+}
+.breakdown-card:hover .breakdown-expand-btn,
+.breakdown-expand-btn:focus-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.breakdown-expand-btn:hover {
+  background: transparent;
+  color: var(--accent);
+}
+.breakdown-card h3 {
+  margin: 0 0 10px;
+  font-size: 15px;
+  line-height: 1.25;
+}
+.breakdown-card .breakdown-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.breakdown-card .breakdown-metric {
+  background: #f8fafc;
+  border-radius: 11px;
+  padding: 8px;
+}
+.breakdown-card .breakdown-metric strong {
+  display: block;
+  font-size: 13px;
+}
+.breakdown-card .breakdown-metric span {
+  display: block;
+  color: var(--muted);
+  font-size: 11px;
+  margin-top: 2px;
+}
+.breakdown-card .breakdown-progress {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e5e7eb;
+  margin-top: 10px;
+}
+.breakdown-card .breakdown-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--accent);
+}
+
 </style>
 </head>
 <body>
-  <header class="app-header">
-    <div>
-      <h1>Inntegral Lead Explorer</h1>
-      <p>Explore venue targets, filter by banquet complexity signals, and size</p>
-    </div>
-  </header>
-
-  <main>
-    <section id="csvAlert" class="panel alert-panel hidden">
-      <strong>Missing venues.csv</strong>
-      <p id="dataStatus">Could not load <code>venues.csv</code>. Make sure this page is served through localhost and that <code>venues.csv</code> sits beside the HTML file.</p>
-    </section>
-
-    <section id="overridesDirtyAlert" class="panel dirty-alert hidden">
+  <div id="topFilterShell" class="top-filter-shell">
+    <header class="app-header">
       <div>
-        <strong>Lead override changes not saved to file</strong>
-        <p>Download the updated JSON and replace <code>lead-overrides.json</code> beside this HTML file. The app will clear this warning automatically when the loaded file is current.</p>
+        <h1>Inntegral Lead Explorer</h1>
+        <p>Explore venue targets, filter by banquet complexity signals, and size</p>
       </div>
-      <button id="downloadOverridesBtn" type="button">Download lead-overrides.json</button>
-    </section>
+      <div class="header-filter-status" aria-live="polite">
+        <div class="header-filter-kicker">Filters</div>
+        <div id="activeFiltersSummary" class="active-filters-summary">No filters applied</div>
+        <button id="headerClearFiltersBtn" class="header-clear-filters hidden" type="button">Clear filters</button>
+      </div>
+    </header>
 
-    <section class="panel filters-panel">
+    <section id="filtersPanel" class="panel filters-panel header-filters-popover" aria-label="Filters panel">
       <div class="field wide">
         <label for="searchInput">Search</label>
         <input id="searchInput" type="search" placeholder="Property, city, state, brand, manager, owner..." />
       </div>
       <div class="field">
-        <label for="brandFilter">Brand / chain</label>
+        <label for="chainFilter">Chain</label>
+        <div id="chainFilter" class="multi-select" data-placeholder="All chains"></div>
+      </div>
+      <div class="field">
+        <label for="brandFilter">Brand</label>
         <div id="brandFilter" class="multi-select" data-placeholder="All brands"></div>
       </div>
       <div class="field">
@@ -672,13 +885,27 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
       </div>
       <button id="resetFiltersBtn" type="button">Reset</button>
     </section>
+  </div>
+
+  <main>
+    <section id="csvAlert" class="panel alert-panel hidden">
+      <strong>Missing venues.csv</strong>
+      <p id="dataStatus">Could not load <code>venues.csv</code>. Make sure this page is served through localhost and that <code>venues.csv</code> sits beside the HTML file.</p>
+    </section>
+
+    <section id="overridesDirtyAlert" class="panel dirty-alert hidden">
+      <div>
+        <strong>Lead override changes not saved to file</strong>
+        <p>Download the updated JSON and replace <code>lead-overrides.json</code> beside this HTML file. The app will clear this warning automatically when the loaded file is current.</p>
+      </div>
+      <button id="downloadOverridesBtn" type="button">Download lead-overrides.json</button>
+    </section>
 
 
     <section class="summary-grid">
       <div class="summary-card"><span id="filteredCount">0</span><label>Filtered properties</label></div>
       <div class="summary-card"><span id="estimatedArr">$0</span><label>Filtered target ARR</label></div>
       <div class="summary-card"><span id="arrProgress">0%</span><label>Signed progress to $1M ARR</label></div>
-      <div class="summary-card"><span id="cityCount">0</span><label>Cities represented</label></div>
     </section>
 
     <section class="panel crm-panel">
@@ -700,22 +927,47 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
       <div id="overrideStatus" class="crm-note"></div>
     </section>
 
-    <section class="analytics-grid">
-      <div class="panel">
+
+    <section class="breakdowns-grid">
+      <section class="panel breakdown-section">
         <div class="panel-heading">
-          <h2>Brand / chain distribution</h2>
-          <span id="brandDistributionNote"></span>
+          <h2>State breakdown</h2>
+          <span id="stateBreakdownNote"></span>
         </div>
-        <div id="brandChart" class="bar-chart empty-state">Load a CSV to see brand distribution.</div>
-      </div>
-      <div class="panel">
+        <div id="stateBreakdown" class="breakdown-slider empty-state">Load a CSV to see state breakdown.</div>
+      </section>
+
+      <section class="panel breakdown-section">
         <div class="panel-heading">
-          <h2>City density map</h2>
-          <span>Interactive map grouped by city/state</span>
+          <h2>Chain breakdown</h2>
+          <span id="chainBreakdownNote"></span>
         </div>
-        <div id="map"></div>
-        <div id="cityDensityList" class="city-list"></div>
-      </div>
+        <div id="chainBreakdown" class="breakdown-slider empty-state">Load a CSV to see chain breakdown.</div>
+      </section>
+
+      <section class="panel breakdown-section">
+        <div class="panel-heading">
+          <h2>Brand breakdown</h2>
+          <span id="brandBreakdownNote"></span>
+        </div>
+        <div id="brandBreakdown" class="breakdown-slider empty-state">Load a CSV to see brand breakdown.</div>
+      </section>
+
+      <section class="panel breakdown-section">
+        <div class="panel-heading">
+          <h2>Management breakdown</h2>
+          <span id="managementBreakdownNote"></span>
+        </div>
+        <div id="managementBreakdown" class="breakdown-slider empty-state">Load a CSV to see management breakdown.</div>
+      </section>
+
+      <section class="panel breakdown-section">
+        <div class="panel-heading">
+          <h2>Ownership breakdown</h2>
+          <span id="ownershipBreakdownNote"></span>
+        </div>
+        <div id="ownershipBreakdown" class="breakdown-slider empty-state">Load a CSV to see ownership breakdown.</div>
+      </section>
     </section>
 
     <section class="panel results-panel">
@@ -775,10 +1027,8 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
   </div>
 
   <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
-  <script src="lead-explorer-config.js"></script>
-  <script src="https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js"></script>
   <script>
-/* global Papa, google */
+/* global Papa */
 
 const PRICING_MODELS = {
   default: {
@@ -831,7 +1081,10 @@ const appState = {
 const els = {
   csvAlert: document.getElementById("csvAlert"),
   dataStatus: document.getElementById("dataStatus"),
+  activeFiltersSummary: document.getElementById("activeFiltersSummary"),
+  headerClearFiltersBtn: document.getElementById("headerClearFiltersBtn"),
   searchInput: document.getElementById("searchInput"),
+  chainFilter: document.getElementById("chainFilter"),
   brandFilter: document.getElementById("brandFilter"),
   managementFilter: document.getElementById("managementFilter"),
   ownershipFilter: document.getElementById("ownershipFilter"),
@@ -848,11 +1101,17 @@ const els = {
   listViewBtn: document.getElementById("listViewBtn"),
   filteredCount: document.getElementById("filteredCount"),
   estimatedArr: document.getElementById("estimatedArr"),
-  cityCount: document.getElementById("cityCount"),
   arrProgress: document.getElementById("arrProgress"),
-  brandChart: document.getElementById("brandChart"),
-  brandDistributionNote: document.getElementById("brandDistributionNote"),
-  cityDensityList: document.getElementById("cityDensityList"),
+  stateBreakdown: document.getElementById("stateBreakdown"),
+  stateBreakdownNote: document.getElementById("stateBreakdownNote"),
+  chainBreakdown: document.getElementById("chainBreakdown"),
+  chainBreakdownNote: document.getElementById("chainBreakdownNote"),
+  brandBreakdown: document.getElementById("brandBreakdown"),
+  brandBreakdownNote: document.getElementById("brandBreakdownNote"),
+  managementBreakdown: document.getElementById("managementBreakdown"),
+  managementBreakdownNote: document.getElementById("managementBreakdownNote"),
+  ownershipBreakdown: document.getElementById("ownershipBreakdown"),
+  ownershipBreakdownNote: document.getElementById("ownershipBreakdownNote"),
   results: document.getElementById("results"),
   resultRange: document.getElementById("resultRange"),
   overridesDirtyAlert: document.getElementById("overridesDirtyAlert"),
@@ -1248,9 +1507,19 @@ function normalizeRow(row) {
   if (["VENUES", "PROMOTIONS", "DESTINATIONS", "DISCOVER"].includes(propertyName.toUpperCase())) return null;
 
   const tier = getTier(totalEventSpaceSqFt);
-  const rawBrandChain = String(row.brandChain || "Unknown").trim() || "Unknown";
+  const rawBrandChain = String(row.brandChain || row.chain || row.Chain || "Unknown").trim() || "Unknown";
   const brandChains = splitMultiValue(rawBrandChain);
   const brandChain = brandChains.length ? joinMultiValue(brandChains) : "Unknown";
+
+  const rawBrandName = String(
+    row.brandName ||
+    row.brand ||
+    row.Brand ||
+    row["Brand Name"] ||
+    ""
+  ).trim();
+  const brandNames = splitMultiValue(rawBrandName);
+  const brandName = brandNames.length ? joinMultiValue(brandNames) : "Unknown";
 
   const rawManagementCompany =
     row.managementCompany ||
@@ -1288,6 +1557,8 @@ function normalizeRow(row) {
     venueType: String(row.venueType || "").trim(),
     brandChain,
     brandChains: brandChains.length ? brandChains : ["Unknown"],
+    brandName,
+    brandNames: brandNames.length ? brandNames : ["Unknown"],
     managementCompany,
     managementCompanies: managementCompanies.length ? managementCompanies : ["Unknown"],
     ownershipGroup,
@@ -1340,10 +1611,17 @@ function loadRows(rows) {
 /** Populates filter dropdowns from the loaded dataset. */
 function populateFilterOptions() {
   setOptions(
-    els.brandFilter,
+    els.chainFilter,
     addNaFilterOption(
       uniqueValues(appState.rows.flatMap((row) => row.brandChains)),
       appState.rows.some((row) => !hasRealMultiValue(row.brandChains))
+    )
+  );
+  setOptions(
+    els.brandFilter,
+    addNaFilterOption(
+      uniqueValues(appState.rows.flatMap((row) => row.brandNames)),
+      appState.rows.some((row) => !hasRealMultiValue(row.brandNames))
     )
   );
   setOptions(
@@ -1538,9 +1816,103 @@ function clearMultiSelect(container) {
   updateMultiSelectLabel(container);
 }
 
+/**
+ * Returns true when at least one filter is active.
+ * @returns {boolean}
+ */
+function hasActiveFilters() {
+  return Boolean(
+    els.searchInput.value.trim() ||
+    getMultiSelectValues(els.chainFilter).length ||
+    getMultiSelectValues(els.brandFilter).length ||
+    getMultiSelectValues(els.managementFilter).length ||
+    getMultiSelectValues(els.ownershipFilter).length ||
+    getMultiSelectValues(els.statusFilter).length ||
+    getMultiSelectValues(els.stateFilter).length ||
+    getMultiSelectValues(els.venueTypeFilter).length ||
+    getMultiSelectValues(els.tierFilter).length ||
+    els.minEventSpace.value ||
+    els.minEventRooms.value ||
+    els.minGuestRooms.value
+  );
+}
+
+/**
+ * Builds a compact text summary of selected filters for the sticky header.
+ * @returns {string}
+ */
+function getActiveFiltersSummary() {
+  const parts = [];
+
+  if (els.searchInput.value.trim()) parts.push(`Search: ${els.searchInput.value.trim()}`);
+
+  [
+    ["Chain", els.chainFilter],
+    ["Brand", els.brandFilter],
+    ["Managed by", els.managementFilter],
+    ["Owned by", els.ownershipFilter],
+    ["Status", els.statusFilter],
+    ["State", els.stateFilter],
+    ["Type", els.venueTypeFilter],
+    ["Tier", els.tierFilter],
+  ].forEach(([label, container]) => {
+    const values = getMultiSelectValues(container);
+    if (!values.length) return;
+    parts.push(`${label}: ${values.length === 1 ? values[0] : `${values.length} selected`}`);
+  });
+
+  if (els.minEventSpace.value) parts.push(`Min space: ${formatNumber(toNumber(els.minEventSpace.value))} sq ft`);
+  if (els.minEventRooms.value) parts.push(`Min rooms: ${formatNumber(toNumber(els.minEventRooms.value))}`);
+  if (els.minGuestRooms.value) parts.push(`Min keys: ${formatNumber(toNumber(els.minGuestRooms.value))}`);
+
+  if (!parts.length) return "No filters applied";
+
+  const visibleParts = parts.slice(0, 3);
+  const remainingCount = parts.length - visibleParts.length;
+
+  return remainingCount > 0
+    ? `${visibleParts.join(" · ")} · +${remainingCount} more`
+    : visibleParts.join(" · ");
+}
+
+/** Updates the sticky header filter summary and clear button. */
+function renderActiveFiltersHeader() {
+  const active = hasActiveFilters();
+  els.activeFiltersSummary.textContent = getActiveFiltersSummary();
+  els.headerClearFiltersBtn.classList.toggle("hidden", !active);
+}
+
+/**
+ * Selects a single value in a multi-select filter, replacing any existing choices.
+ * @param {HTMLElement} container
+ * @param {string} value
+ */
+function selectSingleMultiSelectValue(container, value) {
+  container.querySelectorAll('input[type="checkbox"]').forEach((input) => {
+    input.checked = input.value === value;
+  });
+  updateMultiSelectLabel(container);
+}
+
+/**
+ * Applies a breakdown card as an exact filter and scrolls back to the results.
+ * @param {HTMLElement} filterContainer
+ * @param {string} value
+ */
+function applyBreakdownFilter(filterContainer, value) {
+  if (!filterContainer || !value) return;
+
+  selectSingleMultiSelectValue(filterContainer, value);
+  closeOtherMultiSelects();
+  applyFilters();
+
+  document.querySelector('.results-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
 /** Applies all filters, sorting, summaries, analytics, and results rendering. */
 function applyFilters() {
   const query = els.searchInput.value.trim().toLowerCase();
+  const chains = getMultiSelectValues(els.chainFilter);
   const brands = getMultiSelectValues(els.brandFilter);
   const managers = getMultiSelectValues(els.managementFilter);
   const owners = getMultiSelectValues(els.ownershipFilter);
@@ -1553,12 +1925,25 @@ function applyFilters() {
   const minGuestRooms = toNumber(els.minGuestRooms.value);
 
   appState.filteredRows = appState.rows.filter((row) => {
-    const haystack = [row.propertyName, row.city, row.state, row.venueType, row.brandChain, row.managementCompany, row.ownershipGroup, row.ownerType, row.funnelStatus, row.tier]
+    const haystack = [
+      row.propertyName,
+      row.city,
+      row.state,
+      row.venueType,
+      row.brandChain,
+      row.brandName,
+      row.managementCompany,
+      row.ownershipGroup,
+      row.ownerType,
+      row.funnelStatus,
+      row.tier
+    ]
       .join(" ")
       .toLowerCase();
 
     if (query && !haystack.includes(query)) return false;
-    if (!hasAnySelectedValue(brands, row.brandChains)) return false;
+    if (!hasAnySelectedValue(chains, row.brandChains)) return false;
+    if (!hasAnySelectedValue(brands, row.brandNames)) return false;
     if (!hasAnySelectedValue(managers, row.managementCompanies)) return false;
     if (!hasAnySelectedValue(owners, row.ownershipGroups)) return false;
     if (!hasAnySelectedValue(statuses, row.hasLeadOverride ? [formatFunnelStatus(row.funnelStatus)] : [])) return false;
@@ -1577,9 +1962,9 @@ function applyFilters() {
 
   sortRows(appState.filteredRows, els.sortSelect.value);
   renderSummary();
-  renderBrandChart();
-  renderMap();
+  renderBreakdowns();
   renderResults();
+  renderActiveFiltersHeader();
 }
 
 /**
@@ -1613,12 +1998,9 @@ function renderSummary() {
     .filter((row) => !["signed", "lost", "not_fit"].includes(row.funnelStatus) && !isPipelineStatus(row.funnelStatus))
     .reduce((sum, row) => sum + getTrackedAnnualValue(row), 0);
   const totalTrackedArr = signedArr + pipelineArr + targetLeadArr;
-  const cityCount = new Set(rows.map((row) => `${row.city}, ${row.state}`)).size;
-
   els.filteredCount.textContent = formatNumber(rows.length);
   els.estimatedArr.textContent = `$${formatNumber(estimatedArr)}`;
   els.arrProgress.textContent = `${((signedArr / ARR_GOAL) * 100).toFixed(1)}%`;
-  els.cityCount.textContent = formatNumber(cityCount);
   els.resultRange.textContent = `${formatNumber(rows.length)} of ${formatNumber(appState.rows.length)} loaded`;
 
   els.signedArr.textContent = formatCurrency(signedArr);
@@ -1653,35 +2035,146 @@ function renderSummary() {
 
   /*els.overrideStatus.textContent = appState.leadOverridesLoaded
     ? `Loaded ${formatNumber(overrideCount)} lead override record(s). File version: ${fileVersionLabel}. Local version: ${localVersionLabel}${appState.leadOverridesDirty ? " · changes not exported" : ""}.`
-    : `No lead-overrides.json file loaded yet. Local version: ${localVersionLabel}${appState.leadOverridesDirty ? " · changes not exported" : ""}.`;
+    : `No lead-overrides.json file loaded yet. Local version: ${localVersionLabel}${appState.leadOverridesDirty ? " · changes not exported" : ""}.`;*/
 
-  els.overridesDirtyAlert.classList.toggle("hidden", !appState.leadOverridesDirty);*/
+  els.overridesDirtyAlert.classList.toggle("hidden", !appState.leadOverridesDirty);
 }
 /** Renders a simple bar chart for top brands/chains. */
-function renderBrandChart() {
-  const counts = countBy(appState.filteredRows, (row) => row.brandChain || "Unknown")
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 12);
+/**
+ * Gets displayable values for a breakdown card group.
+ * @param {Array<string>} values
+ * @returns {Array<string>}
+ */
+function getBreakdownValues(values) {
+  const cleanValues = (values || []).filter((value) => value && value !== "Unknown");
+  return cleanValues.length ? cleanValues : ["N/A"];
+}
 
-  if (!counts.length) {
-    els.brandChart.className = "bar-chart empty-state";
-    els.brandChart.textContent = "No matching rows.";
-    els.brandDistributionNote.textContent = "";
+/**
+ * Builds breakdown metric cards from the currently filtered rows.
+ * @param {HTMLElement} container
+ * @param {HTMLElement} noteEl
+ * @param {Array<{key: string, rows: Array<object>}>} groups
+ * @param {HTMLElement} filterContainer
+ */
+function renderBreakdownCards(container, noteEl, groups, filterContainer) {
+  const rankedGroups = groups
+    .map((group) => {
+      const uniqueRows = Array.from(new Map(group.rows.map((row) => [row.venueKey, row])).values());
+      const potentialArr = uniqueRows.reduce((sum, row) => sum + row.targetArr, 0);
+      const signedArr = uniqueRows
+        .filter((row) => row.funnelStatus === "signed")
+        .reduce((sum, row) => sum + getTrackedAnnualValue(row), 0);
+      const pipelineArr = uniqueRows
+        .filter((row) => isPipelineStatus(row.funnelStatus))
+        .reduce((sum, row) => sum + getTrackedAnnualValue(row), 0);
+
+      return {
+        key: group.key,
+        rows: uniqueRows,
+        propertyCount: uniqueRows.length,
+        potentialArr,
+        signedArr,
+        pipelineArr,
+      };
+    })
+    .sort((a, b) => b.potentialArr - a.potentialArr || b.propertyCount - a.propertyCount || a.key.localeCompare(b.key));
+
+  if (!rankedGroups.length) {
+    container.className = "breakdown-slider empty-state";
+    container.textContent = "No matching rows.";
+    noteEl.textContent = "";
     return;
   }
 
-  const max = Math.max(...counts.map((item) => item.count));
-  els.brandChart.className = "bar-chart";
-  els.brandDistributionNote.textContent = `Top ${counts.length}`;
-  els.brandChart.innerHTML = counts
-    .map((item) => `
-      <div class="bar-row" title="${escapeHtml(item.key)}">
-        <div class="bar-label">${escapeHtml(item.key)}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${(item.count / max) * 100}%"></div></div>
-        <div class="bar-value">${item.count}</div>
-      </div>
+  const maxPotential = Math.max(...rankedGroups.map((group) => group.potentialArr), 1);
+  const visibleGroups = rankedGroups;
+
+  container.className = "breakdown-slider";
+  noteEl.textContent = `${visibleGroups.length} sorted by potential ARR`;
+  container.innerHTML = visibleGroups
+    .map((group) => `
+      <article class="breakdown-card" title="${escapeHtml(group.key)}">
+        <button type="button" class="breakdown-expand-btn" data-filter-value="${escapeHtml(group.key)}" aria-label="Filter by ${escapeHtml(group.key)}"><i class="fa-solid fa-up-right-and-down-left-from-center" aria-hidden="true"></i><span class="sr-only">Filter by this value</span></button>
+        <h3>${escapeHtml(group.key)}</h3>
+        <div class="breakdown-metrics">
+          <div class="breakdown-metric"><strong>${formatNumber(group.propertyCount)}</strong><span>Properties</span></div>
+          <div class="breakdown-metric"><strong>${formatCurrency(group.potentialArr)}</strong><span>Potential ARR</span></div>
+          <div class="breakdown-metric"><strong>${formatCurrency(group.signedArr)}</strong><span>Signed ARR</span></div>
+          <div class="breakdown-metric"><strong>${formatCurrency(group.pipelineArr)}</strong><span>Pipeline ARR</span></div>
+        </div>
+        <div class="breakdown-progress">
+          <div class="breakdown-progress-fill" style="width:${Math.max(2, (group.potentialArr / maxPotential) * 100)}%"></div>
+        </div>
+      </article>
     `)
     .join("");
+
+  container.querySelectorAll(".breakdown-expand-btn").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      event.stopPropagation();
+      applyBreakdownFilter(filterContainer, button.dataset.filterValue || "");
+    });
+  });
+}
+
+/**
+ * Creates groups where a property can belong to multiple values.
+ * @param {Array<object>} rows
+ * @param {(row: object) => Array<string>} valuesFn
+ * @returns {Array<{key: string, rows: Array<object>}>}
+ */
+function groupRowsByValues(rows, valuesFn) {
+  const groups = new Map();
+
+  for (const row of rows) {
+    for (const value of getBreakdownValues(valuesFn(row))) {
+      if (!groups.has(value)) groups.set(value, { key: value, rows: [] });
+      groups.get(value).rows.push(row);
+    }
+  }
+
+  return Array.from(groups.values());
+}
+
+/** Renders state, chain, brand, management, and ownership breakdown sliders. */
+function renderBreakdowns() {
+  const rows = appState.filteredRows;
+
+  renderBreakdownCards(
+    els.stateBreakdown,
+    els.stateBreakdownNote,
+    groupRowsByValues(rows, (row) => row.state ? [row.state] : []),
+    els.stateFilter
+  );
+
+  renderBreakdownCards(
+    els.chainBreakdown,
+    els.chainBreakdownNote,
+    groupRowsByValues(rows, (row) => row.brandChains),
+    els.chainFilter
+  );
+
+  renderBreakdownCards(
+    els.brandBreakdown,
+    els.brandBreakdownNote,
+    groupRowsByValues(rows, (row) => row.brandNames),
+    els.brandFilter
+  );
+
+  renderBreakdownCards(
+    els.managementBreakdown,
+    els.managementBreakdownNote,
+    groupRowsByValues(rows, (row) => row.managementCompanies),
+    els.managementFilter
+  );
+
+  renderBreakdownCards(
+    els.ownershipBreakdown,
+    els.ownershipBreakdownNote,
+    groupRowsByValues(rows, (row) => row.ownershipGroups),
+    els.ownershipFilter
+  );
 }
 
 /**
@@ -1700,207 +2193,6 @@ function countBy(rows, keyFn) {
     item.rows.push(row);
   }
   return Array.from(map.values());
-}
-
-/**
- * Dynamically loads the Google Maps JavaScript API.
- * @returns {Promise<boolean>}
- */
-function loadGoogleMaps() {
-  if (window.google?.maps) return Promise.resolve(true);
-
-  if (window.__inntegralGoogleMapsPromise) return window.__inntegralGoogleMapsPromise;
-
-  window.__inntegralGoogleMapsPromise = new Promise((resolve, reject) => {
-    window.__initInntegralGoogleMap = () => resolve(true);
-
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(window.APP_CONFIG?.GOOGLE_MAPS_API_KEY)}&callback=__initInntegralGoogleMap`;
-    script.async = true;
-    script.defer = true;
-    script.onerror = () => reject(new Error("Google Maps failed to load."));
-    document.head.appendChild(script);
-  });
-
-  return window.__inntegralGoogleMapsPromise;
-}
-
-/**
- * Initializes the Google map once.
- * @returns {Promise<boolean>}
- */
-async function initMap() {
-  const mapEl = document.getElementById("map");
-  const hasMaps = await loadGoogleMaps();
-
-  if (!hasMaps) {
-    mapEl.innerHTML = `
-      <div class="map-placeholder">
-        <div>
-          <strong>Google Maps API key required</strong>
-          Add your key to <code>GOOGLE_MAPS_API_KEY</code> near the top of the script to enable the interactive city-density map.
-        </div>
-      </div>
-    `;
-    return false;
-  }
-
-  if (appState.map) return true;
-
-  appState.map = new google.maps.Map(mapEl, {
-    center: { lat: 39.5, lng: -98.35 },
-    zoom: 4,
-    mapTypeControl: false,
-    streetViewControl: false,
-    fullscreenControl: true,
-  });
-
-  appState.geocoder = new google.maps.Geocoder();
-  appState.infoWindow = new google.maps.InfoWindow();
-
-  return true;
-}
-
-/**
- * Geocodes a city/state and caches the result locally.
- * @param {string} cityState
- * @returns {Promise<{lat: number, lng: number}|null>}
- */
-async function geocodeCity(cityState) {
-  const cacheKey = `inntegralLeadExplorerGeo:${cityState}`;
-  const cached = localStorage.getItem(cacheKey);
-
-  if (cached) {
-    try {
-      return JSON.parse(cached);
-    } catch (error) {
-      localStorage.removeItem(cacheKey);
-    }
-  }
-
-  if (!appState.geocoder) return null;
-
-  return new Promise((resolve) => {
-    appState.geocoder.geocode({ address: `${cityState}, United States` }, (results, status) => {
-      if (status !== "OK" || !results?.[0]) {
-        resolve(null);
-        return;
-      }
-
-      const location = results[0].geometry.location;
-      const coords = { lat: location.lat(), lng: location.lng() };
-      localStorage.setItem(cacheKey, JSON.stringify(coords));
-      resolve(coords);
-    });
-  });
-}
-
-/**
- * Renders an interactive Google Maps city density map.
- * City/state rows are geocoded once and cached in localStorage.
- */
-async function renderMap() {
-  const requestId = ++appState.mapRequestId;
-  const ready = await initMap();
-  if (!ready || requestId !== appState.mapRequestId) return;
-
-  if (appState.markerClusterer) {
-    appState.markerClusterer.clearMarkers();
-    appState.markerClusterer = null;
-  }
-
-  for (const marker of appState.markers) marker.setMap(null);
-  appState.markers = [];
-
-  const cityCounts = countBy(appState.filteredRows, (row) => `${row.city}, ${row.state}`)
-    .sort((a, b) => b.count - a.count);
-
-  els.cityDensityList.innerHTML = cityCounts.length
-    ? cityCounts
-        .map((item) => `<div><span>${escapeHtml(item.key)}</span><strong>${item.count}</strong></div>`)
-        .join("")
-    : `<div><span>No matching cities</span><strong>0</strong></div>`;
-
-  const markerData = [];
-
-  for (const item of cityCounts) {
-    if (requestId !== appState.mapRequestId) return;
-
-    const coords = await geocodeCity(item.key);
-    if (!coords) continue;
-
-    markerData.push({
-      item,
-      coords,
-      radius: Math.max(8, Math.min(20, 7 + item.count * 2)),
-    });
-
-    await new Promise((resolve) => setTimeout(resolve, 60));
-  }
-
-  if (requestId !== appState.mapRequestId) return;
-
-  const bounds = new google.maps.LatLngBounds();
-
-  appState.markers = markerData.map((data) => {
-    const marker = new google.maps.Marker({
-      position: data.coords,
-      title: `${data.item.key} · ${data.item.count} properties`,
-      icon: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: data.radius,
-        fillColor: "#1457d9",
-        fillOpacity: 0.30,
-        strokeColor: "#1457d9",
-        strokeWeight: 2,
-      },
-    });
-
-    marker.addListener("click", () => {
-      appState.infoWindow.setContent(
-        `<strong>${escapeHtml(data.item.key)}</strong><br>${data.item.count} properties`
-      );
-      appState.infoWindow.open(appState.map, marker);
-    });
-
-    bounds.extend(data.coords);
-    return marker;
-  });
-
-  if (window.markerClusterer?.MarkerClusterer) {
-    appState.markerClusterer = new markerClusterer.MarkerClusterer({
-      map: appState.map,
-      markers: appState.markers,
-      renderer: {
-        render: ({ count, position }) => {
-          return new google.maps.Marker({
-            position,
-            icon: {
-              url:
-                "data:image/svg+xml;charset=UTF-8," +
-                encodeURIComponent(`
-                  <svg xmlns="http://www.w3.org/2000/svg" width="46" height="46" viewBox="0 0 46 46">
-                    <circle cx="23" cy="23" r="20" fill="#1457d9" fill-opacity="0.86" stroke="white" stroke-width="3"/>
-                    <text x="23" y="28" text-anchor="middle" font-size="13" font-weight="800" font-family="Arial" fill="white">${count}</text>
-                  </svg>
-                `),
-              scaledSize: new google.maps.Size(46, 46),
-            },
-            label: "",
-            zIndex: Number(google.maps.Marker.MAX_ZINDEX) + count,
-          });
-        },
-      },
-    });
-  } else {
-    for (const marker of appState.markers) {
-      marker.setMap(appState.map);
-    }
-  }
-
-  if (!bounds.isEmpty()) {
-    appState.map.fitBounds(bounds, 48);
-  }
 }
 
 /** Renders the property results in the selected view. */
@@ -1945,7 +2237,7 @@ function renderCards() {
         <img src="${escapeHtml(getImageSrc(row))}" alt="" onerror="this.style.display='none'" />
         <div class="card-body">
           <h3>${escapeHtml(row.propertyName)}</h3>
-          <div class="meta">${escapeHtml(row.city)}, ${escapeHtml(row.state)} · ${escapeHtml(row.brandChain)} · ${escapeHtml(row.venueType)}</div>
+          <div class="meta">${escapeHtml(row.city)}, ${escapeHtml(row.state)} · ${escapeHtml(row.brandChain)} · ${escapeHtml(row.brandName)} · ${escapeHtml(row.venueType)}</div>
           <div class="metrics">
             <div class="metric"><strong>${formatNumber(row.totalEventSpaceSqFt)}</strong><span>Total sq ft</span></div>
             <div class="metric"><strong>${formatNumber(row.eventRooms)}</strong><span>Event rooms</span></div>
@@ -1981,7 +2273,8 @@ function renderList() {
           <th>Property</th>
           <th>City</th>
           <th>State</th>
-          <th>Brand / chain</th>
+          <th>Chain</th>
+          <th>Brand</th>
           <th>Management company</th>
           <th>Owner</th>
           <th>Status</th>
@@ -2007,6 +2300,7 @@ function renderList() {
               <td>${escapeHtml(row.city)}</td>
               <td>${escapeHtml(row.state)}</td>
               <td>${escapeHtml(row.brandChain)}</td>
+              <td>${escapeHtml(row.brandName)}</td>
               <td>${escapeHtml(row.managementCompany)}</td>
               <td>${escapeHtml(row.ownershipGroup)}</td>
               <td>${escapeHtml(formatFunnelStatus(row.funnelStatus))}</td>
@@ -2032,6 +2326,7 @@ function renderList() {
 /** Resets all filters. */
 function resetFilters() {
   els.searchInput.value = "";
+  clearMultiSelect(els.chainFilter);
   clearMultiSelect(els.brandFilter);
   clearMultiSelect(els.managementFilter);
   clearMultiSelect(els.ownershipFilter);
@@ -2219,7 +2514,7 @@ function openLeadEditModal(venueKey) {
   appState.activeEditKey = venueKey;
   els.leadEditTitle.textContent = "Edit lead override";
   els.leadEditPropertyName.textContent = row.propertyName;
-  els.leadEditPropertyMeta.textContent = `${row.city}, ${row.state} · ${row.brandChain}`;
+  els.leadEditPropertyMeta.textContent = `${row.city}, ${row.state} · ${row.brandChain} · ${row.brandName}`;
   els.leadKeyInput.value = venueKey;
   els.leadStatusInput.value = row.funnelStatus || "target";
   els.expectedAnnualValueInput.value = row.expectedAnnualValue || "";
@@ -2303,6 +2598,7 @@ async function loadDefaultCsv() {
 document.addEventListener("click", () => closeOtherMultiSelects());
 
 els.resetFiltersBtn.addEventListener("click", resetFilters);
+els.headerClearFiltersBtn.addEventListener("click", resetFilters);
 
 els.cardViewBtn.addEventListener("click", () => {
   appState.view = "cards";
