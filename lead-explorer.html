@@ -121,9 +121,9 @@ main { padding: 24px 32px 48px; }
 .top-filter-shell:hover .header-filters-popover,
 .top-filter-shell:focus-within .header-filters-popover,
 .header-filters-popover.open {
-  max-height: calc(100vh - 112px);
+  max-height: none;
   padding: 18px 38px 24px !important;
-  overflow-y: auto !important;
+  overflow: visible !important;
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
@@ -145,6 +145,38 @@ main { padding: 24px 32px 48px; }
 .header-filters-popover #resetFiltersBtn:hover {
   background: rgba(255,255,255,0.24);
   color: #fff;
+}
+
+.top-filter-shell,
+.header-filters-popover,
+.header-filters-popover .field {
+  overflow: visible !important;
+}
+.header-filters-popover .multi-select-menu {
+  color: var(--text);
+  z-index: 9000;
+}
+.header-filters-popover .multi-select-option,
+.header-filters-popover .multi-select-option span {
+  color: #111827 !important;
+}
+
+.header-filters-popover .multi-select-menu {
+  color: #111827 !important;
+}
+.header-filters-popover .multi-select-option {
+  color: #344054;
+}
+.header-filters-popover .multi-select-actions button {
+  color: var(--accent);
+  background: #fff;
+  border: 1px solid var(--line);
+}
+.header-filters-popover .multi-select-actions button:hover {
+  color: var(--accent) !important;
+  background: #f8fafc !important;
+  border-color: var(--accent) !important;
+  box-shadow: none !important;
 }
 
 .status-panel strong { font-size: 15px; }
@@ -712,7 +744,9 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
   display: flex;
   gap: 14px;
   overflow-x: auto;
-  padding: 18px;
+  padding: 18px 22px;
+  scroll-padding-left: 22px;
+  scroll-padding-right: 22px;
   scroll-snap-type: x proximity;
 }
 .breakdown-slider::-webkit-scrollbar {
@@ -730,6 +764,8 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
   position: relative;
   flex: 0 0 245px;
   scroll-snap-align: start;
+  scroll-margin-left: 22px;
+  scroll-margin-right: 22px;
   border: 1px solid #e7edf6;
   background: linear-gradient(180deg, #ffffff, #f8fbff);
   border-radius: 18px;
@@ -807,6 +843,108 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
   background: var(--accent);
 }
 
+
+
+/* Relationship intelligence */
+.relationship-panel {
+  padding: 18px;
+  margin: 18px 0;
+}
+.relationship-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.relationship-summary-item {
+  border: 1px solid #e7edf6;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+  border-radius: 14px;
+  padding: 12px;
+}
+.relationship-summary-item strong { display: block; font-size: 18px; }
+.relationship-summary-item span { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
+.relationship-network-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.relationship-network-card {
+  border: 1px solid #e7edf6;
+  background: #fff;
+  border-radius: 14px;
+  padding: 12px;
+}
+.relationship-network-card h3 { margin: 0 0 8px; font-size: 14px; }
+.relationship-network-card p { margin: 0 0 10px; color: var(--muted); font-size: 12px; }
+.relationship-open-btn,
+.relationship-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: auto;
+  padding: 6px 9px;
+  border-radius: 999px;
+  border: 1px solid #c7d2fe;
+  background: #eef2ff;
+  color: #3730a3;
+  font-size: 12px;
+  font-weight: 900;
+}
+.relationship-open-btn:hover,
+.relationship-pill:hover {
+  background: #e0e7ff !important;
+  border-color: #818cf8 !important;
+  color: #312e81 !important;
+}
+.breakdown-relationship-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eef2f7;
+}
+.breakdown-relationship-row span { color: var(--muted); font-size: 12px; font-weight: 800; }
+.property-relationship-row { margin-top: 10px; }
+.relationship-modal-card { width: min(860px, 100%); max-height: 86vh; display: flex; flex-direction: column; }
+.relationship-modal-body { overflow-y: auto; }
+.relationship-contact-list { display: grid; gap: 10px; }
+.relationship-contact-card {
+  border: 1px solid #e7edf6;
+  border-radius: 14px;
+  padding: 12px;
+  background: linear-gradient(180deg, #ffffff, #f8fafc);
+}
+.relationship-contact-card strong { display: block; font-size: 14px; }
+.relationship-contact-card .meta { margin: 4px 0 8px; }
+.relationship-contact-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+.relationship-contact-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 7px;
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 800;
+}
+.relationship-contact-tag.high, .relationship-contact-tag.strong { background: #dcfce7; color: #166534; }
+.relationship-contact-tag.medium { background: #fef3c7; color: #854d0e; }
+.relationship-contact-tag.review, .relationship-contact-tag.weak { background: #fee2e2; color: #991b1b; }
+
+.load-more-row {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: center;
+  padding: 8px 0 2px;
+}
+.load-more-row button {
+  min-width: 180px;
+}
+@media (max-width: 1000px) { .relationship-summary-grid { grid-template-columns: 1fr 1fr; } }
+
 </style>
 </head>
 <body>
@@ -873,6 +1011,14 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
         <div id="tierFilter" class="multi-select" data-placeholder="All tiers"></div>
       </div>
       <div class="field">
+        <label for="contactFilter">Relationships</label>
+        <select id="contactFilter">
+          <option value="all">All properties</option>
+          <option value="with">With contacts</option>
+          <option value="without">Without contacts</option>
+        </select>
+      </div>
+      <div class="field">
         <label for="sortSelect">Sort</label>
         <select id="sortSelect">
           <option value="eventSpaceDesc">Event space: high to low</option>
@@ -926,6 +1072,23 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
       <div id="arrMeterLegend" class="arr-meter-legend"></div>
       <div id="overrideStatus" class="crm-note"></div>
     </section>
+
+    <section class="panel relationship-panel">
+      <div class="panel-heading" style="padding:0 0 12px;">
+        <div>
+          <h2>Relationship intelligence</h2>
+          <span id="relationshipStatus">Load contacts.json to see Brian's relevant network.</span>
+        </div>
+      </div>
+      <div class="relationship-summary-grid">
+        <div class="relationship-summary-item"><strong id="relationshipContactCount">0</strong><span>Relevant contacts</span></div>
+        <div class="relationship-summary-item"><strong id="relationshipStrongCount">0</strong><span>Direct hotel contacts</span></div>
+        <div class="relationship-summary-item"><strong id="relationshipEntityCount">0</strong><span>Matched organizations</span></div>
+        <div class="relationship-summary-item"><strong id="relationshipDirectPropertyCount">0</strong><span>Properties with contacts</span></div>
+      </div>
+      <div id="relationshipNetworkCards" class="relationship-network-grid empty-state">No relationship data loaded yet.</div>
+    </section>
+
 
 
     <section class="breakdowns-grid">
@@ -1026,6 +1189,20 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
     </div>
   </div>
 
+  <div id="relationshipModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="relationshipModalTitle">
+    <div class="modal-card relationship-modal-card">
+      <div class="modal-header">
+        <div>
+          <h2 id="relationshipModalTitle">Relevant contacts</h2>
+          <div id="relationshipModalSubtitle" class="meta"></div>
+        </div>
+        <button id="closeRelationshipModalBtn" type="button">Close</button>
+      </div>
+      <div id="relationshipModalBody" class="modal-body relationship-modal-body"></div>
+    </div>
+  </div>
+
+
   <script src="https://unpkg.com/papaparse@5.4.1/papaparse.min.js"></script>
   <script>
 /* global Papa */
@@ -1044,6 +1221,8 @@ const PRICING_MODELS = {
 const TARGET_PRICE_MULTIPLIER = 0.80;
 const NA_FILTER_VALUE = "N/A";
 const ARR_GOAL = 1000000;
+const CONTACTS_JSON_PATH = "./contacts.json";
+const RESULT_PAGE_SIZE = 300;
 const LEAD_OVERRIDES_STORAGE_KEY = "inntegralLeadOverridesWorkingCopy";
 const LEAD_OVERRIDES_META_STORAGE_KEY = "inntegralLeadOverridesWorkingCopyMeta";
 const FUNNEL_STATUSES = [
@@ -1076,6 +1255,15 @@ const appState = {
   leadOverridesFileVersion: "",
   leadOverridesLocalVersion: "",
   activeEditKey: "",
+  relationshipContacts: [],
+  relationshipContactsLoaded: false,
+  relationshipIndexes: {
+    entities: new Map(),
+    properties: new Map(),
+    brands: new Map(),
+    networkGroups: new Map(),
+  },
+  resultDisplayLimit: RESULT_PAGE_SIZE,
 };
 
 const els = {
@@ -1092,6 +1280,7 @@ const els = {
   stateFilter: document.getElementById("stateFilter"),
   venueTypeFilter: document.getElementById("venueTypeFilter"),
   tierFilter: document.getElementById("tierFilter"),
+  contactFilter: document.getElementById("contactFilter"),
   minEventSpace: document.getElementById("minEventSpace"),
   minEventRooms: document.getElementById("minEventRooms"),
   minGuestRooms: document.getElementById("minGuestRooms"),
@@ -1137,6 +1326,17 @@ const els = {
   leadKeyInput: document.getElementById("leadKeyInput"),
   saveLeadOverrideBtn: document.getElementById("saveLeadOverrideBtn"),
   clearLeadOverrideBtn: document.getElementById("clearLeadOverrideBtn"),
+  relationshipStatus: document.getElementById("relationshipStatus"),
+  relationshipContactCount: document.getElementById("relationshipContactCount"),
+  relationshipStrongCount: document.getElementById("relationshipStrongCount"),
+  relationshipEntityCount: document.getElementById("relationshipEntityCount"),
+  relationshipDirectPropertyCount: document.getElementById("relationshipDirectPropertyCount"),
+  relationshipNetworkCards: document.getElementById("relationshipNetworkCards"),
+  relationshipModal: document.getElementById("relationshipModal"),
+  relationshipModalTitle: document.getElementById("relationshipModalTitle"),
+  relationshipModalSubtitle: document.getElementById("relationshipModalSubtitle"),
+  relationshipModalBody: document.getElementById("relationshipModalBody"),
+  closeRelationshipModalBtn: document.getElementById("closeRelationshipModalBtn"),
 };
 
 /**
@@ -1831,6 +2031,7 @@ function hasActiveFilters() {
     getMultiSelectValues(els.stateFilter).length ||
     getMultiSelectValues(els.venueTypeFilter).length ||
     getMultiSelectValues(els.tierFilter).length ||
+    els.contactFilter.value !== "all" ||
     els.minEventSpace.value ||
     els.minEventRooms.value ||
     els.minGuestRooms.value
@@ -1860,6 +2061,9 @@ function getActiveFiltersSummary() {
     if (!values.length) return;
     parts.push(`${label}: ${values.length === 1 ? values[0] : `${values.length} selected`}`);
   });
+
+  if (els.contactFilter.value === "with") parts.push("Relationships: With contacts");
+  if (els.contactFilter.value === "without") parts.push("Relationships: Without contacts");
 
   if (els.minEventSpace.value) parts.push(`Min space: ${formatNumber(toNumber(els.minEventSpace.value))} sq ft`);
   if (els.minEventRooms.value) parts.push(`Min rooms: ${formatNumber(toNumber(els.minEventRooms.value))}`);
@@ -1909,8 +2113,315 @@ function applyBreakdownFilter(filterContainer, value) {
   document.querySelector('.results-panel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+
+
+/** Normalizes text for relationship matching. */
+function normalizeRelationshipText(value) {
+  return String(value || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/&/g, " and ")
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\b(the|and|inc|llc|ltd|company|corporation|corp|co|group)\b/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Canonical company aliases used to avoid duplicate relationship cards. */
+const RELATIONSHIP_ALIAS_GROUPS = {
+  Marriott: ["marriott", "marriott international", "marriott hotels", "marriott bonvoy", "starwood hotels"],
+  Hilton: ["hilton", "hilton hotels", "hilton hotels resorts"],
+  Hyatt: ["hyatt", "hyatt hotels", "hyatt regency"],
+  IHG: ["ihg", "ihg hotels resorts", "intercontinental hotel group"],
+  UKG: ["ukg", "ukg ultimate kronos group", "ultimate kronos group"],
+  "Gaylord Hotels": ["gaylord hotels", "gaylord"],
+  "Ritz-Carlton": ["ritz carlton", "the ritz carlton hotel"],
+  Westin: ["westin", "westin hotels resorts"],
+  Sheraton: ["sheraton", "sheraton hotels resorts"],
+  Renaissance: ["renaissance", "renaissance hotels"],
+  "JW Marriott": ["jw marriott"],
+  "Autograph Collection": ["autograph collection"],
+  "Luxury Collection": ["luxury collection"],
+  "St. Regis": ["st regis"],
+  "Omni Hotels & Resorts": ["omni", "omni hotels", "omni hotels resorts"],
+  "Loews Hotels": ["loews", "loews hotels"],
+  "Host Hotels & Resorts": ["host hotels", "host hotels resorts"],
+  "Park Hotels & Resorts": ["park hotels", "park hotels resorts"],
+  "RLJ Lodging Trust": ["rlj", "rlj lodging trust"],
+  "Sunstone Hotel Investors": ["sunstone", "sunstone hotel investors"],
+  "Xenia Hotels & Resorts": ["xenia", "xenia hotels resorts"],
+  "Aimbridge Hospitality": ["aimbridge", "aimbridge hospitality"],
+  "Pyramid Global Hospitality": ["pyramid", "pyramid global hospitality", "pyramid hotel group"],
+  "Davidson Hospitality Group": ["davidson", "davidson hospitality"],
+  "HEI Hotels & Resorts": ["hei", "hei hotels", "hei hotels resorts"],
+  "White Lodging": ["white lodging", "white lodging services"],
+  "Crescent Hotels & Resorts": ["crescent", "crescent hotels resorts"],
+  "Atrium Hospitality": ["atrium", "atrium hospitality"],
+  "First Hospitality": ["first hospitality"],
+  Evention: ["evention"],
+  WorkJam: ["workjam"],
+  Dayforce: ["dayforce"],
+  Unifocus: ["unifocus"],
+  Axsium: ["axsium"],
+  "In-Workforce": ["in workforce", "in workforce ltd"],
+  Actabl: ["actabl"],
+  Logile: ["logile"],
+  "Cayuga Hospitality Consultants": ["cayuga", "cayuga hospitality consultants"],
+  HVS: ["hvs", "hvs executive search"],
+  "The Plasencia Group": ["plasencia", "the plasencia group"],
+};
+
+/** Returns a canonical organization name when one is known. */
+function canonicalRelationshipName(value) {
+  const normalized = normalizeRelationshipText(value);
+  if (!normalized) return "Unknown";
+
+  for (const [canonical, aliases] of Object.entries(RELATIONSHIP_ALIAS_GROUPS)) {
+    if (aliases.map(normalizeRelationshipText).some((alias) => normalized === alias || normalized.includes(alias))) {
+      return canonical;
+    }
+  }
+
+  return String(value || "Unknown").trim();
+}
+
+/** Returns aliases for Explorer entities and normalized organization names. */
+function getRelationshipAliases(value) {
+  const canonical = canonicalRelationshipName(value);
+  const normalized = normalizeRelationshipText(value);
+  const aliases = new Set([normalized, normalizeRelationshipText(canonical)]);
+  const configured = RELATIONSHIP_ALIAS_GROUPS[canonical] || [];
+  configured.forEach((alias) => aliases.add(normalizeRelationshipText(alias)));
+  return Array.from(aliases).filter(Boolean);
+}
+
+
+/** Returns a readable unique set of relationship types for a contact. */
+function getContactRelationshipTypes(contact) {
+  const relationships = contact.relationships || {};
+  const types = [];
+  if (Array.isArray(relationships.properties) && relationships.properties.length) types.push("Property");
+  if (Array.isArray(relationships.brands) && relationships.brands.length) types.push("Brand");
+  if (Array.isArray(relationships.chains) && relationships.chains.length) types.push("Chain");
+  if (Array.isArray(relationships.management) && relationships.management.length) types.push("Management");
+  if (Array.isArray(relationships.ownership) && relationships.ownership.length) types.push("Ownership");
+  if (Array.isArray(relationships.ecosystem) && relationships.ecosystem.length) types.push("Ecosystem");
+  return Array.from(new Set(types.length ? types : ["Contact"]));
+}
+
+/** Formats relationship values attached to a contact without duplicate labels. */
+function getContactRelationshipLabels(contact) {
+  const relationships = contact.relationships || {};
+  const values = [];
+  ["chains", "management", "ownership", "ecosystem", "brands"].forEach((key) => {
+    (relationships[key] || []).forEach((value) => {
+      const canonical = canonicalRelationshipName(value);
+      if (canonical && canonical !== "Unknown") values.push(canonical);
+    });
+  });
+  return Array.from(new Set(values)).slice(0, 6);
+}
+
+/** Returns a stable cache key for a relationship entity. */
+function relationshipCacheKey(entityType, entityName) {
+  return `${entityType}|${canonicalRelationshipName(entityName)}`;
+}
+
+/** Adds a contact to a map of arrays, preserving uniqueness by contact id. */
+function addContactToIndex(index, key, contact) {
+  if (!key) return;
+  if (!index.has(key)) index.set(key, []);
+  const existing = index.get(key);
+  if (!existing.some((item) => item.id === contact.id)) existing.push(contact);
+}
+
+/** Builds lookup indexes from pre-assigned contacts.json relationships. */
+function buildRelationshipIndexes() {
+  const indexes = {
+    entities: new Map(),
+    properties: new Map(),
+    brands: new Map(),
+    networkGroups: new Map(),
+  };
+
+  for (const contact of appState.relationshipContacts || []) {
+    const relationships = contact.relationships || {};
+
+    (relationships.properties || []).forEach((propertyKey) => addContactToIndex(indexes.properties, propertyKey, contact));
+    (relationships.brands || []).forEach((brand) => {
+      const brandKey = canonicalRelationshipName(brand);
+      addContactToIndex(indexes.brands, brandKey, contact);
+      addContactToIndex(indexes.entities, relationshipCacheKey("brand", brand), contact);
+    });
+    (relationships.chains || []).forEach((chain) => {
+      const canonical = canonicalRelationshipName(chain);
+      addContactToIndex(indexes.entities, relationshipCacheKey("chain", chain), contact);
+      addContactToIndex(indexes.networkGroups, canonical, contact);
+    });
+    (relationships.management || []).forEach((manager) => {
+      const canonical = canonicalRelationshipName(manager);
+      addContactToIndex(indexes.entities, relationshipCacheKey("management", manager), contact);
+      addContactToIndex(indexes.networkGroups, canonical, contact);
+    });
+    (relationships.ownership || []).forEach((owner) => {
+      const canonical = canonicalRelationshipName(owner);
+      addContactToIndex(indexes.entities, relationshipCacheKey("ownership", owner), contact);
+      addContactToIndex(indexes.networkGroups, canonical, contact);
+    });
+    (relationships.ecosystem || []).forEach((organization) => {
+      const canonical = canonicalRelationshipName(organization);
+      addContactToIndex(indexes.entities, relationshipCacheKey("ecosystem", organization), contact);
+      addContactToIndex(indexes.networkGroups, canonical, contact);
+    });
+  }
+
+  for (const map of Object.values(indexes)) {
+    map.forEach((contacts, key) => map.set(key, contacts.sort(sortRelationshipContacts)));
+  }
+
+  appState.relationshipIndexes = indexes;
+}
+
+/** Returns contacts relevant to a breakdown/entity card using indexed pre-assigned JSON relationships only. */
+function getContactsForEntity(entityType, entityName) {
+  return appState.relationshipIndexes.entities.get(relationshipCacheKey(entityType, entityName)) || [];
+}
+
+/** Property cards show only contacts explicitly pre-assigned to the property or its brand. */
+function getDirectContactsForProperty(row) {
+  const contacts = new Map();
+  (appState.relationshipIndexes.properties.get(row.venueKey) || []).forEach((contact) => contacts.set(contact.id, contact));
+
+  (row.brandNames || []).forEach((brandName) => {
+    if (!brandName || brandName === "Unknown") return;
+    (appState.relationshipIndexes.brands.get(canonicalRelationshipName(brandName)) || []).forEach((contact) => contacts.set(contact.id, contact));
+  });
+
+  return Array.from(contacts.values()).sort(sortRelationshipContacts);
+}
+
+/** Sorts contacts by objective relationship type rather than subjective relevance. */
+function sortRelationshipContacts(a, b) {
+  const typeRank = { Property: 0, Brand: 1, Chain: 2, Management: 3, Ownership: 4, Ecosystem: 5, Contact: 9 };
+  const aType = getContactRelationshipTypes(a)[0] || "Contact";
+  const bType = getContactRelationshipTypes(b)[0] || "Contact";
+  return (typeRank[aType] ?? 9) - (typeRank[bType] ?? 9)
+    || String(a.canonicalCompany || a.company || "").localeCompare(String(b.canonicalCompany || b.company || ""))
+    || String(a.role || "").localeCompare(String(b.role || ""))
+    || String(a.name || "").localeCompare(String(b.name || ""));
+}
+
+/** Renders the contact button for property cards, limited to property and brand matches. */
+function renderPropertyRelationshipSnippet(row) {
+  const contacts = getDirectContactsForProperty(row);
+  if (!contacts.length) return "";
+  return `
+    <div class="property-relationship-row">
+      <button type="button" class="relationship-pill" data-relationship-context="property" data-relationship-name="${escapeHtml(row.propertyName)}">
+        <i class="fa-solid fa-user-group" aria-hidden="true"></i>${formatNumber(contacts.length)} contact${contacts.length === 1 ? "" : "s"}
+      </button>
+    </div>
+  `;
+}
+
+/** Renders relationship summary and network cards. */
+function renderRelationshipIntelligence() {
+  const contacts = appState.relationshipContacts || [];
+  const propertyContactCount = contacts.filter((contact) => (contact.relationships?.properties || []).length > 0).length;
+  const propertiesWithContacts = appState.rows.filter((row) => getDirectContactsForProperty(row).length > 0).length;
+
+  els.relationshipContactCount.textContent = formatNumber(contacts.length);
+  els.relationshipStrongCount.textContent = formatNumber(propertyContactCount);
+  els.relationshipDirectPropertyCount.textContent = formatNumber(propertiesWithContacts);
+
+  if (!contacts.length) {
+    els.relationshipEntityCount.textContent = "0";
+    els.relationshipStatus.textContent = "No contacts.json file loaded.";
+    els.relationshipNetworkCards.className = "relationship-network-grid empty-state";
+    els.relationshipNetworkCards.textContent = "No relationship data loaded yet.";
+    return;
+  }
+
+  const ranked = Array.from(appState.relationshipIndexes.networkGroups.entries())
+    .filter(([company]) => company && company !== "Unknown")
+    .map(([company, companyContacts]) => ({
+      company,
+      contacts: companyContacts,
+      property: companyContacts.filter((contact) => (contact.relationships?.properties || []).length > 0).length,
+      brand: companyContacts.filter((contact) => (contact.relationships?.brands || []).length > 0).length,
+    }))
+    .sort((a, b) => b.contacts.length - a.contacts.length || b.property - a.property || a.company.localeCompare(b.company))
+    .slice(0, 18);
+
+  els.relationshipEntityCount.textContent = formatNumber(appState.relationshipIndexes.networkGroups.size);
+  els.relationshipStatus.textContent = `${formatNumber(contacts.length)} contacts loaded from contacts.json. Relationship cards only show organization-level entities.`;
+  els.relationshipNetworkCards.className = "relationship-network-grid";
+  els.relationshipNetworkCards.innerHTML = ranked.map((group) => `
+    <article class="relationship-network-card">
+      <h3>${escapeHtml(group.company)}</h3>
+      <p>${formatNumber(group.contacts.length)} contacts${group.property ? ` · ${formatNumber(group.property)} property-specific` : ""}${group.brand ? ` · ${formatNumber(group.brand)} brand-level` : ""}</p>
+      <button type="button" class="relationship-open-btn" data-relationship-context="network" data-relationship-name="${escapeHtml(group.company)}">
+        View contacts
+      </button>
+    </article>
+  `).join("");
+}
+
+/** Opens the relationship contact modal. */
+function openRelationshipModal(title, subtitle, contacts) {
+  const sortedContacts = [...contacts].sort(sortRelationshipContacts);
+  els.relationshipModalTitle.textContent = title;
+  els.relationshipModalSubtitle.textContent = subtitle || `${formatNumber(sortedContacts.length)} contacts`;
+
+  if (!sortedContacts.length) {
+    els.relationshipModalBody.innerHTML = `<div class="empty-state">No contacts found.</div>`;
+  } else {
+    els.relationshipModalBody.innerHTML = `
+      <div class="relationship-contact-list">
+        ${sortedContacts.map((contact) => `
+          <article class="relationship-contact-card">
+            <strong>${escapeHtml(contact.name)}</strong>
+            <div class="meta">${escapeHtml(contact.role)} · ${escapeHtml(contact.company)}${contact.canonicalCompany && contact.canonicalCompany !== contact.company ? ` · normalized to ${escapeHtml(contact.canonicalCompany)}` : ""}</div>
+            <div class="relationship-contact-tags">
+              ${getContactRelationshipTypes(contact).map((type) => `<span class="relationship-contact-tag">${escapeHtml(type)}</span>`).join("")}
+              ${getContactRelationshipLabels(contact).map((label) => `<span class="relationship-contact-tag">${escapeHtml(label)}</span>`).join("")}
+              ${contact.url ? `<a class="relationship-contact-tag" href="${escapeHtml(contact.url)}" target="_blank" rel="noopener">LinkedIn</a>` : ""}
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  els.relationshipModal.classList.remove("hidden");
+}
+
+/** Closes the relationship modal. */
+function closeRelationshipModal() {
+  els.relationshipModal.classList.add("hidden");
+}
+
+/** Loads curated relationship contacts from JSON. */
+async function loadRelationshipContacts() {
+  try {
+    const response = await fetch(CONTACTS_JSON_PATH, { cache: "no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    appState.relationshipContacts = Array.isArray(payload.contacts) ? payload.contacts : [];
+    appState.relationshipContactsLoaded = true;
+    buildRelationshipIndexes();
+  } catch (error) {
+    appState.relationshipContacts = [];
+    appState.relationshipContactsLoaded = false;
+    buildRelationshipIndexes();
+    console.warn("CONTACTS_JSON_LOAD_FAILED", error);
+  }
+}
+
 /** Applies all filters, sorting, summaries, analytics, and results rendering. */
-function applyFilters() {
+function applyFilters(options = {}) {
+  if (options.resetResultLimit !== false) appState.resultDisplayLimit = RESULT_PAGE_SIZE;
   const query = els.searchInput.value.trim().toLowerCase();
   const chains = getMultiSelectValues(els.chainFilter);
   const brands = getMultiSelectValues(els.brandFilter);
@@ -1920,6 +2431,7 @@ function applyFilters() {
   const states = getMultiSelectValues(els.stateFilter);
   const venueTypes = getMultiSelectValues(els.venueTypeFilter);
   const tiers = getMultiSelectValues(els.tierFilter);
+  const contactFilter = els.contactFilter.value;
   const minEventSpace = toNumber(els.minEventSpace.value);
   const minEventRooms = toNumber(els.minEventRooms.value);
   const minGuestRooms = toNumber(els.minGuestRooms.value);
@@ -1950,6 +2462,11 @@ function applyFilters() {
     if (!hasAnySelectedValue(states, row.state ? [row.state] : [])) return false;
     if (!hasAnySelectedValue(venueTypes, row.venueType ? [row.venueType] : [])) return false;
     if (!hasAnySelectedValue(tiers, row.tier ? [row.tier] : [])) return false;
+    if (contactFilter !== "all") {
+      const hasContacts = getDirectContactsForProperty(row).length > 0;
+      if (contactFilter === "with" && !hasContacts) return false;
+      if (contactFilter === "without" && hasContacts) return false;
+    }
     if (minEventSpace && row.totalEventSpaceSqFt < minEventSpace) return false;
     if (minEventRooms && row.eventRooms < minEventRooms) return false;
     if (minGuestRooms && row.guestRooms < minGuestRooms) return false;
@@ -1962,6 +2479,7 @@ function applyFilters() {
 
   sortRows(appState.filteredRows, els.sortSelect.value);
   renderSummary();
+  renderRelationshipIntelligence();
   renderBreakdowns();
   renderResults();
   renderActiveFiltersHeader();
@@ -2057,7 +2575,7 @@ function getBreakdownValues(values) {
  * @param {Array<{key: string, rows: Array<object>}>} groups
  * @param {HTMLElement} filterContainer
  */
-function renderBreakdownCards(container, noteEl, groups, filterContainer) {
+function renderBreakdownCards(container, noteEl, groups, filterContainer, entityType = "entity") {
   const rankedGroups = groups
     .map((group) => {
       const uniqueRows = Array.from(new Map(group.rows.map((row) => [row.venueKey, row])).values());
@@ -2069,6 +2587,7 @@ function renderBreakdownCards(container, noteEl, groups, filterContainer) {
         .filter((row) => isPipelineStatus(row.funnelStatus))
         .reduce((sum, row) => sum + getTrackedAnnualValue(row), 0);
 
+      const contacts = getContactsForEntity(entityType, group.key);
       return {
         key: group.key,
         rows: uniqueRows,
@@ -2076,6 +2595,7 @@ function renderBreakdownCards(container, noteEl, groups, filterContainer) {
         potentialArr,
         signedArr,
         pipelineArr,
+        contacts,
       };
     })
     .sort((a, b) => b.potentialArr - a.potentialArr || b.propertyCount - a.propertyCount || a.key.localeCompare(b.key));
@@ -2103,6 +2623,12 @@ function renderBreakdownCards(container, noteEl, groups, filterContainer) {
           <div class="breakdown-metric"><strong>${formatCurrency(group.signedArr)}</strong><span>Signed ARR</span></div>
           <div class="breakdown-metric"><strong>${formatCurrency(group.pipelineArr)}</strong><span>Pipeline ARR</span></div>
         </div>
+        ${group.contacts.length ? `
+          <div class="breakdown-relationship-row">
+            <span>${formatNumber(group.contacts.length)} contact${group.contacts.length === 1 ? "" : "s"}</span>
+            <button type="button" class="relationship-open-btn" data-relationship-context="${escapeHtml(entityType)}" data-relationship-name="${escapeHtml(group.key)}">View</button>
+          </div>
+        ` : ""}
         <div class="breakdown-progress">
           <div class="breakdown-progress-fill" style="width:${Math.max(2, (group.potentialArr / maxPotential) * 100)}%"></div>
         </div>
@@ -2145,35 +2671,40 @@ function renderBreakdowns() {
     els.stateBreakdown,
     els.stateBreakdownNote,
     groupRowsByValues(rows, (row) => row.state ? [row.state] : []),
-    els.stateFilter
+    els.stateFilter,
+    "state"
   );
 
   renderBreakdownCards(
     els.chainBreakdown,
     els.chainBreakdownNote,
     groupRowsByValues(rows, (row) => row.brandChains),
-    els.chainFilter
+    els.chainFilter,
+    "chain"
   );
 
   renderBreakdownCards(
     els.brandBreakdown,
     els.brandBreakdownNote,
     groupRowsByValues(rows, (row) => row.brandNames),
-    els.brandFilter
+    els.brandFilter,
+    "brand"
   );
 
   renderBreakdownCards(
     els.managementBreakdown,
     els.managementBreakdownNote,
     groupRowsByValues(rows, (row) => row.managementCompanies),
-    els.managementFilter
+    els.managementFilter,
+    "management"
   );
 
   renderBreakdownCards(
     els.ownershipBreakdown,
     els.ownershipBreakdownNote,
     groupRowsByValues(rows, (row) => row.ownershipGroups),
-    els.ownershipFilter
+    els.ownershipFilter,
+    "ownership"
   );
 }
 
@@ -2225,7 +2756,9 @@ function hasHospitalityOnlineUrl(row) {
 /** Renders card view. */
 function renderCards() {
   els.results.className = "cards";
-  els.results.innerHTML = appState.filteredRows
+  const visibleRows = appState.filteredRows.slice(0, appState.resultDisplayLimit);
+  const hasMoreRows = appState.filteredRows.length > visibleRows.length;
+  els.results.innerHTML = visibleRows
     .map((row) => `
       <article class="property-card ${row.hasLeadOverride ? `status-card-${escapeHtml(row.funnelStatus)}` : ""}">
         ${row.hasLeadOverride ? `<div class="status-flag status-flag-${escapeHtml(row.funnelStatus)}">${escapeHtml(formatFunnelStatus(row.funnelStatus))}</div>` : ""}
@@ -2234,7 +2767,7 @@ function renderCards() {
           ${hasHospitalityOnlineUrl(row) ? `<a href="${escapeHtml(row.hospitalityOnlineUrl)}" target="_blank" rel="noopener">Hospitality Online</a>` : ""}
           <button type="button" data-edit-key="${escapeHtml(row.venueKey)}">Edit</button>
         </div>
-        <img src="${escapeHtml(getImageSrc(row))}" alt="" onerror="this.style.display='none'" />
+        <img src="${escapeHtml(getImageSrc(row))}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'" />
         <div class="card-body">
           <h3>${escapeHtml(row.propertyName)}</h3>
           <div class="meta">${escapeHtml(row.city)}, ${escapeHtml(row.state)} · ${escapeHtml(row.brandChain)} · ${escapeHtml(row.brandName)} · ${escapeHtml(row.venueType)}</div>
@@ -2255,11 +2788,24 @@ function renderCards() {
             ${renderManagementTags(row)}
             ${renderOwnershipTags(row)}
           </div>
+          ${renderPropertyRelationshipSnippet(row)}
           ${row.leadNotes ? `<div class="meta" style="margin-top:10px;">${escapeHtml(row.leadNotes)}</div>` : ""}
         </div>
       </article>
     `)
-    .join("");
+    .join("") + (hasMoreRows ? `
+      <div class="load-more-row">
+        <button type="button" id="loadMoreResultsBtn">Load ${Math.min(RESULT_PAGE_SIZE, appState.filteredRows.length - visibleRows.length)} more</button>
+      </div>
+    ` : "");
+
+  const loadMoreButton = document.getElementById("loadMoreResultsBtn");
+  if (loadMoreButton) {
+    loadMoreButton.addEventListener("click", () => {
+      appState.resultDisplayLimit += RESULT_PAGE_SIZE;
+      renderResults();
+    });
+  }
 }
 
 /** Renders list/table view. */
@@ -2288,6 +2834,7 @@ function renderList() {
           <th>Target ARR<br><small>20% off</small></th>
           <th>Tracked ARR</th>
           <th>Target %</th>
+          <th>Contacts</th>
           <th>Edit</th>
         </tr>
       </thead>
@@ -2295,7 +2842,7 @@ function renderList() {
         ${appState.filteredRows
           .map((row) => `
             <tr>
-              <td><img class="table-thumb" src="${escapeHtml(getImageSrc(row))}" alt="" onerror="this.style.display='none'" /></td>
+              <td><img class="table-thumb" src="${escapeHtml(getImageSrc(row))}" alt="" loading="lazy" decoding="async" onerror="this.style.display='none'" /></td>
               <td>${row.sourceUrl ? `<a href="${escapeHtml(row.sourceUrl)}" target="_blank" rel="noopener">${escapeHtml(row.propertyName)}</a>` : escapeHtml(row.propertyName)}</td>
               <td>${escapeHtml(row.city)}</td>
               <td>${escapeHtml(row.state)}</td>
@@ -2314,6 +2861,7 @@ function renderList() {
               <td>${formatCurrency(row.targetArr)}</td>
               <td>${formatCurrency(getTrackedAnnualValue(row))}</td>
               <td>${((getTrackedAnnualValue(row) / ARR_GOAL) * 100).toFixed(1)}%</td>
+              <td>${getDirectContactsForProperty(row).length ? `<button type="button" class="relationship-open-btn" data-relationship-context="property" data-relationship-name="${escapeHtml(row.propertyName)}">${formatNumber(getDirectContactsForProperty(row).length)}</button>` : ""}</td>
               <td><button type="button" data-edit-key="${escapeHtml(row.venueKey)}">Edit</button></td>
             </tr>
           `)
@@ -2334,6 +2882,7 @@ function resetFilters() {
   clearMultiSelect(els.stateFilter);
   clearMultiSelect(els.venueTypeFilter);
   clearMultiSelect(els.tierFilter);
+  els.contactFilter.value = "all";
   els.minEventSpace.value = "";
   els.minEventRooms.value = "";
   els.minGuestRooms.value = "";
@@ -2593,7 +3142,9 @@ async function loadDefaultCsv() {
   els.minEventRooms,
   els.minGuestRooms,
   els.sortSelect,
+  els.contactFilter,
 ].forEach((el) => el.addEventListener("input", applyFilters));
+els.contactFilter.addEventListener("change", applyFilters);
 
 document.addEventListener("click", () => closeOtherMultiSelects());
 
@@ -2622,6 +3173,33 @@ document.addEventListener("click", (event) => {
   }
 });
 
+
+document.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-relationship-context]");
+  if (!button) return;
+  event.preventDefault();
+  event.stopPropagation();
+
+  const context = button.dataset.relationshipContext || "entity";
+  const name = button.dataset.relationshipName || "";
+  let contacts = [];
+  let subtitle = "";
+
+  if (context === "property") {
+    const row = appState.rows.find((item) => item.propertyName === name);
+    contacts = row ? getDirectContactsForProperty(row) : [];
+    subtitle = "Pre-assigned property and brand contacts only";
+  } else if (context === "network") {
+    contacts = appState.relationshipIndexes.networkGroups.get(canonicalRelationshipName(name)) || [];
+    subtitle = "Organization-level relationship cluster";
+  } else {
+    contacts = getContactsForEntity(context, name);
+    subtitle = `${context.charAt(0).toUpperCase() + context.slice(1)} relationship matches`;
+  }
+
+  openRelationshipModal(name, subtitle, contacts);
+});
+
 els.downloadOverridesBtn.addEventListener("click", downloadLeadOverrides);
 els.closeLeadEditBtn.addEventListener("click", closeLeadEditModal);
 els.saveLeadOverrideBtn.addEventListener("click", saveLeadOverrideFromModal);
@@ -2629,9 +3207,13 @@ els.clearLeadOverrideBtn.addEventListener("click", clearLeadOverrideFromModal);
 els.leadEditModal.addEventListener("click", (event) => {
   if (event.target === els.leadEditModal) closeLeadEditModal();
 });
+els.closeRelationshipModalBtn.addEventListener("click", closeRelationshipModal);
+els.relationshipModal.addEventListener("click", (event) => {
+  if (event.target === els.relationshipModal) closeRelationshipModal();
+});
 
 populateLeadStatusInput();
-loadLeadOverrides().then(loadDefaultCsv);
+Promise.all([loadLeadOverrides(), loadRelationshipContacts()]).then(loadDefaultCsv);
 
 
 </script>
