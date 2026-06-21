@@ -1,9 +1,10 @@
 {
-  "version": "v5-curated-assistant",
+  "version": "v6-simplified-owner-fix",
   "notes": [
     "Property matching is pre-assigned in this JSON. The Explorer should not infer property contacts using fuzzy/shared-word matching.",
     "Direct property relationships require explicit property/company/title evidence. Broad chain contacts are mapped to chain/management/owner breakdowns, not to every property card.",
-    "Brand relationships are used only for explicit brand-level contacts such as Gaylord Hotels, Westin, Sheraton, Crowne Plaza, etc."
+    "Brand relationships are used only for explicit brand-level contacts such as Gaylord Hotels, Westin, Sheraton, Crowne Plaza, etc.",
+    "Fixed ownership contacts from filtered CSV so Host/Park/RLJ/Sunstone/Xenia render as ownership organizations."
   ],
   "_metadata": {
     "sourceContactsCsv": "relevant_connections_filtered(2).csv",
@@ -143,8 +144,8 @@
       "id": "john-mccurdy-sanchez-crowne-plaza-hotels-and-resorts",
       "name": "John McCurdy-Sanchez",
       "role": "General Manager",
-      "company": "Crowne Plaza® Hotels & Resorts",
-      "canonicalCompany": "Crowne Plaza® Hotels & Resorts",
+      "company": "Crowne Plaza\u00ae Hotels & Resorts",
+      "canonicalCompany": "Crowne Plaza\u00ae Hotels & Resorts",
       "category": "Direct hotel / property",
       "kind": "direct_property",
       "priority": "Medium",
@@ -886,8 +887,8 @@
       "id": "glenn-reynolds-viljoen-ihg-hotels-and-resorts",
       "name": "Glenn Reynolds-Viljoen",
       "role": "Vice President, Performance, Integration and Operations Support (EMEAA)",
-      "company": "IHG Hotels & Resorts®",
-      "canonicalCompany": "IHG Hotels & Resorts®",
+      "company": "IHG Hotels & Resorts\u00ae",
+      "canonicalCompany": "IHG Hotels & Resorts\u00ae",
       "category": "Direct hotel / property",
       "kind": "direct_property",
       "priority": "High",
@@ -5870,7 +5871,7 @@
     {
       "id": "becky-stein-ukg",
       "name": "Becky Stein",
-      "role": "Customer Success Manager – Executive Relationships",
+      "role": "Customer Success Manager \u2013 Executive Relationships",
       "company": "UKG",
       "canonicalCompany": "UKG",
       "category": "Hospitality / workforce tech",
@@ -10868,7 +10869,7 @@
     {
       "id": "michael-van-akkeren-marriott-international",
       "name": "Michael van Akkeren",
-      "role": "Global Lead – Standards and Growth Projects (operations)",
+      "role": "Global Lead \u2013 Standards and Growth Projects (operations)",
       "company": "Marriott International",
       "canonicalCompany": "Marriott",
       "category": "Hotel chain / corporate",
@@ -12165,13 +12166,20 @@
       "kind": "ownership_reit",
       "priority": "Medium",
       "url": "https://www.linkedin.com/in/patricia-brady-b1a67510",
-      "organizations": [],
+      "organizations": [
+        {
+          "type": "ownership",
+          "name": "Host Hotels & Resorts"
+        }
+      ],
       "relationships": {
         "properties": [],
         "brands": [],
         "chains": [],
         "management": [],
-        "ownership": [],
+        "ownership": [
+          "Host Hotels & Resorts"
+        ],
         "ecosystem": []
       },
       "source": "Brian LinkedIn export",
@@ -12193,13 +12201,20 @@
       "kind": "ownership_reit",
       "priority": "High",
       "url": "https://www.linkedin.com/in/christine-herrington-602539",
-      "organizations": [],
+      "organizations": [
+        {
+          "type": "ownership",
+          "name": "Park Hotels & Resorts"
+        }
+      ],
       "relationships": {
         "properties": [],
         "brands": [],
         "chains": [],
         "management": [],
-        "ownership": [],
+        "ownership": [
+          "Park Hotels & Resorts"
+        ],
         "ecosystem": []
       },
       "source": "Brian LinkedIn export",
@@ -12251,7 +12266,7 @@
       "name": "Christopher Ostapovicz",
       "role": "Chief Operating Officer",
       "company": "Sunstone Hotel Investors, Inc.",
-      "canonicalCompany": "Sunstone Hotel investors",
+      "canonicalCompany": "Sunstone Hotel Investors",
       "category": "Ownership / REIT",
       "kind": "ownership_reit",
       "priority": "High",
@@ -12260,6 +12275,10 @@
         {
           "type": "ownership",
           "name": "Sunstone Hotel investors"
+        },
+        {
+          "type": "ownership",
+          "name": "Sunstone Hotel Investors"
         }
       ],
       "relationships": {
@@ -12268,7 +12287,7 @@
         "chains": [],
         "management": [],
         "ownership": [
-          "Sunstone Hotel investors"
+          "Sunstone Hotel Investors"
         ],
         "ecosystem": []
       },
@@ -12286,18 +12305,25 @@
       "name": "Barry Bloom",
       "role": "President and Chief Operating Officer (NYSE:XHR)",
       "company": "Xenia Hotels & Resorts, Inc.",
-      "canonicalCompany": "Xenia Hotels & Resorts, Inc.",
+      "canonicalCompany": "Xenia Hotels & Resorts",
       "category": "Ownership / REIT",
       "kind": "ownership_reit",
       "priority": "High",
       "url": "https://www.linkedin.com/in/barry-bloom-17962823",
-      "organizations": [],
+      "organizations": [
+        {
+          "type": "ownership",
+          "name": "Xenia Hotels & Resorts"
+        }
+      ],
       "relationships": {
         "properties": [],
         "brands": [],
         "chains": [],
         "management": [],
-        "ownership": [],
+        "ownership": [
+          "Xenia Hotels & Resorts"
+        ],
         "ecosystem": []
       },
       "source": "Brian LinkedIn export",

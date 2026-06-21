@@ -865,11 +865,32 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
 .relationship-summary-item strong { display: block; font-size: 18px; }
 .relationship-summary-item span { display: block; color: var(--muted); font-size: 12px; margin-top: 2px; }
 .relationship-network-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 12px;
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 4px 4px 12px;
+  scroll-snap-type: x proximity;
+  scroll-padding-left: 4px;
+}
+.relationship-network-grid.empty-state {
+  display: block;
+  overflow-x: visible;
+  padding: 24px;
+}
+.relationship-network-grid::-webkit-scrollbar {
+  height: 10px;
+}
+.relationship-network-grid::-webkit-scrollbar-track {
+  background: #eef2f7;
+  border-radius: 999px;
+}
+.relationship-network-grid::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
 }
 .relationship-network-card {
+  flex: 0 0 245px;
+  scroll-snap-align: start;
   border: 1px solid #e7edf6;
   background: #fff;
   border-radius: 14px;
@@ -2351,11 +2372,10 @@ function renderRelationshipIntelligence() {
       property: companyContacts.filter((contact) => (contact.relationships?.properties || []).length > 0).length,
       brand: companyContacts.filter((contact) => (contact.relationships?.brands || []).length > 0).length,
     }))
-    .sort((a, b) => b.contacts.length - a.contacts.length || b.property - a.property || a.company.localeCompare(b.company))
-    .slice(0, 18);
+    .sort((a, b) => b.contacts.length - a.contacts.length || b.property - a.property || a.company.localeCompare(b.company));
 
   els.relationshipEntityCount.textContent = formatNumber(appState.relationshipIndexes.networkGroups.size);
-  els.relationshipStatus.textContent = `${formatNumber(contacts.length)} contacts loaded from contacts.json. Relationship cards only show organization-level entities.`;
+  els.relationshipStatus.textContent = `${formatNumber(contacts.length)} contacts loaded from contacts.json. Relationship cards show all organization-level entities.`;
   els.relationshipNetworkCards.className = "relationship-network-grid";
   els.relationshipNetworkCards.innerHTML = ranked.map((group) => `
     <article class="relationship-network-card">
