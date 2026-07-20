@@ -1012,6 +1012,10 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
         <div id="stateFilter" class="multi-select" data-placeholder="All states"></div>
       </div>
       <div class="field">
+        <label for="cityFilter">City</label>
+        <div id="cityFilter" class="multi-select" data-placeholder="All cities"></div>
+      </div>
+      <div class="field">
         <label for="venueTypeFilter">Venue type</label>
         <div id="venueTypeFilter" class="multi-select" data-placeholder="All venue types"></div>
       </div>
@@ -1119,6 +1123,14 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
           <span id="stateBreakdownNote"></span>
         </div>
         <div id="stateBreakdown" class="breakdown-slider empty-state">Load a CSV to see state breakdown.</div>
+      </section>
+
+      <section class="panel breakdown-section">
+        <div class="panel-heading">
+          <h2>City breakdown</h2>
+          <span id="cityBreakdownNote"></span>
+        </div>
+        <div id="cityBreakdown" class="breakdown-slider empty-state">Load a CSV to see city breakdown.</div>
       </section>
 
       <section class="panel breakdown-section">
@@ -1299,6 +1311,7 @@ const els = {
   ownershipFilter: document.getElementById("ownershipFilter"),
   statusFilter: document.getElementById("statusFilter"),
   stateFilter: document.getElementById("stateFilter"),
+  cityFilter: document.getElementById("cityFilter"),
   venueTypeFilter: document.getElementById("venueTypeFilter"),
   tierFilter: document.getElementById("tierFilter"),
   contactFilter: document.getElementById("contactFilter"),
@@ -1314,6 +1327,8 @@ const els = {
   arrProgress: document.getElementById("arrProgress"),
   stateBreakdown: document.getElementById("stateBreakdown"),
   stateBreakdownNote: document.getElementById("stateBreakdownNote"),
+  cityBreakdown: document.getElementById("cityBreakdown"),
+  cityBreakdownNote: document.getElementById("cityBreakdownNote"),
   chainBreakdown: document.getElementById("chainBreakdown"),
   chainBreakdownNote: document.getElementById("chainBreakdownNote"),
   brandBreakdown: document.getElementById("brandBreakdown"),
@@ -1874,6 +1889,13 @@ function populateFilterOptions() {
     )
   );
   setOptions(
+    els.cityFilter,
+    addNaFilterOption(
+      uniqueValues(appState.rows.map((row) => row.city)),
+      appState.rows.some((row) => !row.city)
+    )
+  );
+  setOptions(
     els.venueTypeFilter,
     addNaFilterOption(
       uniqueValues(appState.rows.map((row) => row.venueType)),
@@ -2050,6 +2072,7 @@ function hasActiveFilters() {
     getMultiSelectValues(els.ownershipFilter).length ||
     getMultiSelectValues(els.statusFilter).length ||
     getMultiSelectValues(els.stateFilter).length ||
+    getMultiSelectValues(els.cityFilter).length ||
     getMultiSelectValues(els.venueTypeFilter).length ||
     getMultiSelectValues(els.tierFilter).length ||
     els.contactFilter.value !== "all" ||
@@ -2075,6 +2098,7 @@ function getActiveFiltersSummary() {
     ["Owned by", els.ownershipFilter],
     ["Status", els.statusFilter],
     ["State", els.stateFilter],
+    ["City", els.cityFilter],
     ["Type", els.venueTypeFilter],
     ["Tier", els.tierFilter],
   ].forEach(([label, container]) => {
@@ -2449,6 +2473,7 @@ function applyFilters(options = {}) {
   const owners = getMultiSelectValues(els.ownershipFilter);
   const statuses = getMultiSelectValues(els.statusFilter);
   const states = getMultiSelectValues(els.stateFilter);
+  const cities = getMultiSelectValues(els.cityFilter);
   const venueTypes = getMultiSelectValues(els.venueTypeFilter);
   const tiers = getMultiSelectValues(els.tierFilter);
   const contactFilter = els.contactFilter.value;
@@ -2480,6 +2505,7 @@ function applyFilters(options = {}) {
     if (!hasAnySelectedValue(owners, row.ownershipGroups)) return false;
     if (!hasAnySelectedValue(statuses, row.hasLeadOverride ? [formatFunnelStatus(row.funnelStatus)] : [])) return false;
     if (!hasAnySelectedValue(states, row.state ? [row.state] : [])) return false;
+    if (!hasAnySelectedValue(cities, row.city ? [row.city] : [])) return false;
     if (!hasAnySelectedValue(venueTypes, row.venueType ? [row.venueType] : [])) return false;
     if (!hasAnySelectedValue(tiers, row.tier ? [row.tier] : [])) return false;
     if (contactFilter !== "all") {
@@ -2696,6 +2722,14 @@ function renderBreakdowns() {
   );
 
   renderBreakdownCards(
+    els.cityBreakdown,
+    els.cityBreakdownNote,
+    groupRowsByValues(rows, (row) => row.city ? [row.city] : []),
+    els.cityFilter,
+    "city"
+  );
+
+  renderBreakdownCards(
     els.chainBreakdown,
     els.chainBreakdownNote,
     groupRowsByValues(rows, (row) => row.brandChains),
@@ -2900,6 +2934,7 @@ function resetFilters() {
   clearMultiSelect(els.ownershipFilter);
   clearMultiSelect(els.statusFilter);
   clearMultiSelect(els.stateFilter);
+  clearMultiSelect(els.cityFilter);
   clearMultiSelect(els.venueTypeFilter);
   clearMultiSelect(els.tierFilter);
   els.contactFilter.value = "all";
