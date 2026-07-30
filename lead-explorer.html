@@ -955,6 +955,29 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
 .relationship-contact-tag.medium { background: #fef3c7; color: #854d0e; }
 .relationship-contact-tag.review, .relationship-contact-tag.weak { background: #fee2e2; color: #991b1b; }
 
+.filter-match-mode {
+  align-self: end;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+.filter-match-mode label {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  margin: 0;
+  color: var(--text);
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.filter-match-mode input {
+  width: 17px;
+  height: 17px;
+  margin: 0;
+  accent-color: var(--accent);
+}
+
 .load-more-row {
   grid-column: 1 / -1;
   display: flex;
@@ -1042,6 +1065,12 @@ td a { color: var(--accent); font-weight: 700; text-decoration: none; }
           <option value="with">With contacts</option>
           <option value="without">Without contacts</option>
         </select>
+      </div>
+      <div class="filter-match-mode">
+        <label for="matchAnyFilter">
+          <input id="matchAnyFilter" type="checkbox" />
+          Match any active filter
+        </label>
       </div>
       <div class="field">
         <label for="sortSelect">Sort</label>
@@ -1315,6 +1344,7 @@ const els = {
   venueTypeFilter: document.getElementById("venueTypeFilter"),
   tierFilter: document.getElementById("tierFilter"),
   contactFilter: document.getElementById("contactFilter"),
+  matchAnyFilter: document.getElementById("matchAnyFilter"),
   minEventSpace: document.getElementById("minEventSpace"),
   minEventRooms: document.getElementById("minEventRooms"),
   minGuestRooms: document.getElementById("minGuestRooms"),
@@ -2114,14 +2144,15 @@ function getActiveFiltersSummary() {
   if (els.minEventRooms.value) parts.push(`Min rooms: ${formatNumber(toNumber(els.minEventRooms.value))}`);
   if (els.minGuestRooms.value) parts.push(`Min keys: ${formatNumber(toNumber(els.minGuestRooms.value))}`);
 
-  if (!parts.length) return "No filters applied";
+  if (!parts.length) return `No filters applied · Mode: ${els.matchAnyFilter.checked ? "Match any" : "Match all"}`;
 
   const visibleParts = parts.slice(0, 3);
   const remainingCount = parts.length - visibleParts.length;
+  const mode = els.matchAnyFilter.checked ? "Match any" : "Match all";
 
   return remainingCount > 0
-    ? `${visibleParts.join(" · ")} · +${remainingCount} more`
-    : visibleParts.join(" · ");
+    ? `${mode} · ${visibleParts.join(" · ")} · +${remainingCount} more`
+    : `${mode} · ${visibleParts.join(" · ")}`;
 }
 
 /** Updates the sticky header filter summary and clear button. */
@@ -2480,6 +2511,7 @@ function applyFilters(options = {}) {
   const minEventSpace = toNumber(els.minEventSpace.value);
   const minEventRooms = toNumber(els.minEventRooms.value);
   const minGuestRooms = toNumber(els.minGuestRooms.value);
+  const matchAny = els.matchAnyFilter.checked;
 
   appState.filteredRows = appState.rows.filter((row) => {
     const haystack = [
@@ -2498,25 +2530,34 @@ function applyFilters(options = {}) {
       .join(" ")
       .toLowerCase();
 
-    if (query && !haystack.includes(query)) return false;
-    if (!hasAnySelectedValue(chains, row.brandChains)) return false;
-    if (!hasAnySelectedValue(brands, row.brandNames)) return false;
-    if (!hasAnySelectedValue(managers, row.managementCompanies)) return false;
-    if (!hasAnySelectedValue(owners, row.ownershipGroups)) return false;
-    if (!hasAnySelectedValue(statuses, row.hasLeadOverride ? [formatFunnelStatus(row.funnelStatus)] : [])) return false;
-    if (!hasAnySelectedValue(states, row.state ? [row.state] : [])) return false;
-    if (!hasAnySelectedValue(cities, row.city ? [row.city] : [])) return false;
-    if (!hasAnySelectedValue(venueTypes, row.venueType ? [row.venueType] : [])) return false;
-    if (!hasAnySelectedValue(tiers, row.tier ? [row.tier] : [])) return false;
+    const activePredicates = [];
+
+    if (query) activePredicates.push(haystack.includes(query));
+    if (chains.length) activePredicates.push(hasAnySelectedValue(chains, row.brandChains));
+    if (brands.length) activePredicates.push(hasAnySelectedValue(brands, row.brandNames));
+    if (managers.length) activePredicates.push(hasAnySelectedValue(managers, row.managementCompanies));
+    if (owners.length) activePredicates.push(hasAnySelectedValue(owners, row.ownershipGroups));
+    if (statuses.length) {
+      activePredicates.push(
+        hasAnySelectedValue(statuses, row.hasLeadOverride ? [formatFunnelStatus(row.funnelStatus)] : [])
+      );
+    }
+    if (states.length) activePredicates.push(hasAnySelectedValue(states, row.state ? [row.state] : []));
+    if (cities.length) activePredicates.push(hasAnySelectedValue(cities, row.city ? [row.city] : []));
+    if (venueTypes.length) {
+      activePredicates.push(hasAnySelectedValue(venueTypes, row.venueType ? [row.venueType] : []));
+    }
+    if (tiers.length) activePredicates.push(hasAnySelectedValue(tiers, row.tier ? [row.tier] : []));
     if (contactFilter !== "all") {
       const hasContacts = getDirectContactsForProperty(row).length > 0;
-      if (contactFilter === "with" && !hasContacts) return false;
-      if (contactFilter === "without" && hasContacts) return false;
+      activePredicates.push(contactFilter === "with" ? hasContacts : !hasContacts);
     }
-    if (minEventSpace && row.totalEventSpaceSqFt < minEventSpace) return false;
-    if (minEventRooms && row.eventRooms < minEventRooms) return false;
-    if (minGuestRooms && row.guestRooms < minGuestRooms) return false;
-    return true;
+    if (minEventSpace) activePredicates.push(row.totalEventSpaceSqFt >= minEventSpace);
+    if (minEventRooms) activePredicates.push(row.eventRooms >= minEventRooms);
+    if (minGuestRooms) activePredicates.push(row.guestRooms >= minGuestRooms);
+
+    if (!activePredicates.length) return true;
+    return matchAny ? activePredicates.some(Boolean) : activePredicates.every(Boolean);
   });
 
   for (const row of appState.rows) {
@@ -2938,6 +2979,7 @@ function resetFilters() {
   clearMultiSelect(els.venueTypeFilter);
   clearMultiSelect(els.tierFilter);
   els.contactFilter.value = "all";
+  els.matchAnyFilter.checked = false;
   els.minEventSpace.value = "";
   els.minEventRooms.value = "";
   els.minGuestRooms.value = "";
@@ -3198,8 +3240,10 @@ async function loadDefaultCsv() {
   els.minGuestRooms,
   els.sortSelect,
   els.contactFilter,
+  els.matchAnyFilter,
 ].forEach((el) => el.addEventListener("input", applyFilters));
 els.contactFilter.addEventListener("change", applyFilters);
+els.matchAnyFilter.addEventListener("change", applyFilters);
 
 document.addEventListener("click", () => closeOtherMultiSelects());
 
